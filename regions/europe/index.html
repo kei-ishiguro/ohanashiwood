@@ -1,0 +1,286 @@
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>ヨーロッパの昔話｜昔話の森</title>
+
+<style>
+:root {
+    --ink: #35483d;
+    --green: #66866c;
+    --cream: #f7f4e9;
+    --paper: #fffdf6;
+    --line: #dce4d5;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Yu Mincho", "Hiragino Mincho ProN",
+                 "Noto Serif JP", serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.8;
+}
+
+header {
+    text-align: center;
+    padding: 35px 20px 15px;
+}
+
+header h1 {
+    font-size: clamp(25px, 5vw, 34px);
+    margin: 0;
+    letter-spacing: 0.08em;
+}
+
+header p {
+    margin-top: 10px;
+    color: #71816e;
+}
+
+main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.intro {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.intro .emoji {
+    font-size: 45px;
+}
+
+.intro h2 {
+    font-size: 21px;
+    margin: 5px 0 10px;
+}
+
+.intro p {
+    margin: 0;
+    font-size: 15px;
+}
+
+/* 4つの入口 */
+
+.europe-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.europe-card {
+    display: block;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 25px 12px;
+    text-align: center;
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.europe-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(53, 72, 61, 0.12);
+}
+
+.europe-emoji {
+    display: block;
+    font-size: 48px;
+    margin-bottom: 8px;
+}
+
+.europe-name {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.europe-note {
+    display: block;
+    font-size: 13px;
+    color: #71816e;
+    margin-top: 5px;
+}
+
+.card-arrow {
+    display: block;
+    margin-top: 12px;
+    color: var(--green);
+    font-size: 13px;
+}
+
+/* 戻るボタン */
+
+.back-button {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 10px 22px;
+    border-radius: 30px;
+    background: var(--green);
+    color: white;
+    text-decoration: none;
+}
+
+.back-button:hover {
+    background: #4e7055;
+}
+
+footer {
+    text-align: center;
+    padding: 35px 15px;
+    font-size: 13px;
+    color: #81907c;
+}
+
+@media (min-width: 600px) {
+    .europe-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🌍 ヨーロッパの昔話</h1>
+    <p>どんな物語の世界をたずねよう？</p>
+</header>
+
+<main>
+
+    <section class="intro">
+        <div class="emoji">🎈</div>
+
+        <h2>ヨーロッパの物語の森へ</h2>
+
+        <p>
+            ヨーロッパには、たくさんの昔話があるよ。<br>
+            気になる物語の世界を選んで、<br>
+            ふしぎな旅に出かけよう。
+        </p>
+    </section>
+
+    <section class="europe-grid">
+
+        <!-- グリム -->
+
+        <a href="grimm/index.html" class="europe-card">
+
+            <span class="europe-emoji">📖</span>
+
+            <span class="europe-name">
+                グリム
+            </span>
+
+            <span class="europe-note">
+                ドイツの昔話
+            </span>
+
+            <span class="card-arrow">
+                物語をたずねる →
+            </span>
+
+        </a>
+
+
+        <!-- イギリス -->
+
+        <a href="british/index.html" class="europe-card">
+
+            <span class="europe-emoji">🏰</span>
+
+            <span class="europe-name">
+                イギリス
+            </span>
+
+            <span class="europe-note">
+                イギリスの昔話
+            </span>
+
+            <span class="card-arrow">
+                物語をたずねる →
+            </span>
+
+        </a>
+
+
+        <!-- 北欧 -->
+
+        <a href="nordic/index.html" class="europe-card">
+
+            <span class="europe-emoji">❄️</span>
+
+            <span class="europe-name">
+                北欧
+            </span>
+
+            <span class="europe-note">
+                北の国々の昔話
+            </span>
+
+            <span class="card-arrow">
+                物語をたずねる →
+            </span>
+
+        </a>
+
+
+        <!-- その他 -->
+
+        <a href="other/index.html" class="europe-card">
+
+            <span class="europe-emoji">✨</span>
+
+            <span class="europe-name">
+                その他
+            </span>
+
+            <span class="europe-note">
+                さまざまな国の昔話
+            </span>
+
+            <span class="card-arrow">
+                物語をたずねる →
+            </span>
+
+        </a>
+
+    </section>
+
+    <div style="text-align:center;">
+
+        <a href="../../index.html" class="back-button">
+            ← 昔話の森にもどる
+        </a>
+
+    </div>
+
+</main>
+
+<footer>
+    昔話の森 ― 世界の物語をたずねる旅
+</footer>
+
+</body>
+</html>
+```

@@ -1,0 +1,299 @@
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>キーアイテムの森｜昔話の森</title>
+
+<style>
+:root {
+    --ink: #35483d;
+    --green: #66866c;
+    --cream: #f7f4e9;
+    --paper: #fffdf6;
+    --line: #dce4d5;
+    --gold: #c5a56a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Yu Mincho", "Hiragino Mincho ProN",
+                 "Noto Serif JP", serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.8;
+}
+
+header {
+    text-align: center;
+    padding: 35px 20px 15px;
+}
+
+header h1 {
+    font-size: clamp(25px, 5vw, 34px);
+    margin: 0;
+    letter-spacing: 0.08em;
+}
+
+header p {
+    color: #71816e;
+    margin-top: 10px;
+}
+
+main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.intro {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.intro .emoji {
+    font-size: 45px;
+}
+
+.intro h2 {
+    font-size: 21px;
+    margin: 5px 0 10px;
+}
+
+.intro p {
+    margin: 0;
+    font-size: 15px;
+}
+
+/* アイテムカード */
+
+.keys-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.key-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px 10px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--ink);
+    font-family: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.key-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(53, 72, 61, 0.12);
+}
+
+.key-card.selected {
+    background: #e8f0e5;
+    border: 2px solid var(--green);
+}
+
+.key-emoji {
+    font-size: 42px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.key-name {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.key-note {
+    font-size: 12px;
+    color: #7b8978;
+    margin-top: 3px;
+}
+
+/* 昔話一覧 */
+
+.story-area {
+    display: none;
+    margin-top: 35px;
+    padding: 25px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+}
+
+.story-area.show {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+.story-area h2 {
+    text-align: center;
+    font-size: 22px;
+    margin-top: 0;
+}
+
+.message {
+    text-align: center;
+    color: #71816e;
+    font-size: 14px;
+}
+
+.story-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.story-title {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #edf1e7;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    font-size: 15px;
+}
+
+.back-button {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 10px 22px;
+    border-radius: 30px;
+    background: var(--green);
+    color: white;
+    text-decoration: none;
+}
+
+.back-button:hover {
+    background: #4e7055;
+}
+
+footer {
+    text-align: center;
+    padding: 35px 15px;
+    font-size: 13px;
+    color: #81907c;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (min-width: 600px) {
+    .keys-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>✨ 昔話のキーアイテム</h1>
+    <p>物語の秘密を握る、大切なアイテムたち</p>
+</header>
+
+<main>
+
+    <section class="intro">
+        <div class="emoji">🗝️</div>
+
+        <h2>宝物の森へようこそ</h2>
+
+        <p>
+            昔話には、不思議な力を持つ道具や、<br>
+            物語の鍵になるものが登場するよ。<br>
+            気になるアイテムを選んでみよう。
+        </p>
+    </section>
+
+    <section class="keys-grid" id="keysGrid">
+
+        <button class="key-card" data-key="札">
+            <span class="key-emoji">📜</span>
+            <span class="key-name">お札</span>
+            <span class="key-note">不思議な力を持つ札</span>
+        </button>
+
+        <button class="key-card" data-key="こぶ">
+            <span class="key-emoji">👴</span>
+            <span class="key-name">こぶ</span>
+            <span class="key-note">顔についているこぶ</span>
+        </button>
+
+        <button class="key-card" data-key="金棒">
+            <span class="key-emoji">🔨</span>
+            <span class="key-name">金棒</span>
+            <span class="key-note">鬼の持つ道具</span>
+        </button>
+
+        <button class="key-card" data-key="小槌">
+            <span class="key-emoji">🪄</span>
+            <span class="key-name">打ち出の小槌</span>
+            <span class="key-note">願いをかなえる小槌</span>
+        </button>
+
+        <button class="key-card" data-key="ひょうたん">
+            <span class="key-emoji">🍶</span>
+            <span class="key-name">ひょうたん</span>
+            <span class="key-note">昔話に登場する入れ物</span>
+        </button>
+
+        <button class="key-card" data-key="桃">
+            <span class="key-emoji">🍑</span>
+            <span class="key-name">桃</span>
+            <span class="key-note">物語の始まりになる桃</span>
+        </button>
+
+        <button class="key-card" data-key="笠">
+            <span class="key-emoji">👒</span>
+            <span class="key-name">笠</span>
+            <span class="key-note">旅や冬に使う笠</span>
+        </button>
+
+        <button class="key-card" data-key="鏡">
+            <span class="key-emoji">🪞</span>
+            <span class="key-name">鏡</span>
+            <span class="key-note">不思議な鏡</span>
+        </button>
+
+        <button class="key-card" data-key="針">
+            <span class="key-emoji">🪡</span>
+            <span class="key-name">針</span>
+            <span class="key-note">小さな道具</span>
+        </button>
+
+        <button class="key-card" data-key="歌">
+            <span class="key-emoji">🎵</span>
+            <span class="key-name">歌</span>
+            <span class="key-note">物語を動かす歌</span>
+        </button>
+
+        <button class="key-card" data-key="鬼">
+            <span class="key-emoji">👹</span>
+            <span class="key-name">鬼</span>
+            <span class="key-note">不思議な存在</span>
+        </button>
+
+        <button class="key-card" data-key="宝

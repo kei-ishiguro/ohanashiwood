@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日本のふしぎなそんざい｜昔話の森</title>
+<style>
+:root{
+  --ink:#35483d; --green:#66866c; --paper:#fffaf0;
+  --gold:#d8ad5c; --soft:#edf2e7; --brown:#87684d;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;color:var(--ink);
+  font-family:"Yu Gothic","Meiryo",sans-serif;
+  background:linear-gradient(180deg,#e9f3f1 0,#fffaf0 360px);
+}
+header{text-align:center;padding:28px 16px 8px}
+.kicker{font-size:14px;letter-spacing:.18em;color:#718b7b}
+h1{font-size:clamp(27px,5vw,42px);margin:8px 0;color:#496b54}
+.lead{font-size:16px;line-height:1.9;margin:0 auto;max-width:650px}
+.balloon-wrap{height:108px;position:relative;overflow:hidden}
+.balloon{
+  position:absolute;left:calc(50% - 24px);top:8px;font-size:48px;
+  animation:float 3.8s ease-in-out infinite
+}
+@keyframes float{
+  0%,100%{transform:translateY(8px) rotate(-4deg)}
+  50%{transform:translateY(-8px) rotate(4deg)}
+}
+main{max-width:1000px;margin:0 auto;padding:10px 18px 42px}
+.map-card{
+  background:rgba(255,255,255,.88);
+  border:1px solid #e5dfce;border-radius:24px;
+  padding:clamp(12px,3vw,28px);
+  box-shadow:0 8px 26px #52634a14;
+}
+.map-title{text-align:center;font-size:19px;font-weight:bold;margin:0 0 4px}
+.map-note{text-align:center;font-size:13px;color:#718075;margin:0 0 12px}
+.map-area{position:relative;width:100%;max-width:850px;margin:auto}
+.map-area svg{display:block;width:100%;height:auto}
+.land{fill:#d9e4c9;stroke:#a8b99b;stroke-width:2;stroke-linejoin:round}
+.ocean-label{fill:#8aa9a3;font-size:13px;letter-spacing:2px}
+.pin{cursor:pointer;outline:none}
+.pin circle{fill:#fffaf0;stroke:#bd8845;stroke-width:3}
+.pin text{font-size:22px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.pin:hover circle,.pin:focus circle,.pin.active circle{
+  fill:#ffe5a6;stroke:#8b6232;stroke-width:4
+}
+.pin-label{font-size:12px;fill:#45594a;font-weight:bold;text-anchor:middle}
+.hint{text-align:center;color:#718075;font-size:13px;margin:8px 0 0}
+
+.detail{
+  display:none;margin:22px auto 0;max-width:760px;
+  background:#f4f5e9;border:1px solid #dce4d3;
+  border-radius:18px;padding:20px;
+}
+.detail.show{display:block;animation:appear .25s ease}
+@keyframes appear{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.detail h2{margin:0 0 8px;color:#496b54;font-size:23px}
+.detail p{line-height:1.8;margin:7px 0}
+.examples{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.example{
+  background:#fff;border:1px solid #d9dfd0;
+  border-radius:999px;padding:7px 12px;font-size:14px
+}
+.back{
+  display:inline-block;margin-top:18px;color:#52735a;
+  text-decoration:none;font-weight:bold
+}
+.back:hover{text-decoration:underline}
+footer{text-align:center;padding:0 16px 28px;color:#7b877b;font-size:13px}
+
+/* 地域のカテゴリー */
+.category-list,.being-list{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;margin-top:18px
+}
+.choice-button{
+  border:1px solid #d9dfd0;border-radius:14px;
+  background:#fff;color:var(--ink);
+  padding:16px 12px;font-size:16px;font-weight:bold;
+  cursor:pointer;transition:.2s
+}
+.choice-button:hover{background:#fff2d5;transform:translateY(-2px)}
+.choice-button:disabled{opacity:.55;cursor:default;transform:none}
+.choice-button small{
+  display:block;font-size:12px;font-weight:normal;
+  color:#718075;margin-top:6px
+}
+
+/* ゲームの2つの入り口：絵のようなカード */
+.game-entry-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;margin:18px auto 4px;max-width:680px
+}
+.game-entry-card{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:14px;background:rgba(255,255,255,.86);
+  border:1px solid #dfe4d5;border-radius:22px;
+  box-shadow:0 8px 22px rgba(66,87,61,.10);
+  text-decoration:none;color:var(--ink);
+  transition:transform .2s,box-shadow .2s
+}
+.game-entry-card:hover,.game-entry-card:focus-visible{
+  transform:translateY(-4px);box-shadow:0 12px 26px rgba(66,87,61,.16);
+  outline:2px solid #b7c9a9;outline-offset:2px
+}
+.entry-art{
+  width:100%;min-height:150px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;margin-bottom:14px
+}
+.entry-art.item-art{background:radial-gradient(circle at 50% 45%,#fff7e8 0,#f2e6ce 100%)}
+.entry-art.title-art{background:radial-gradient(circle at 50% 45%,#f7fbef 0,#e4edda 100%)}
+.entry-art .big-icon{font-size:clamp(58px,9vw,82px);filter:drop-shadow(0 4px 2px #35483d18)}
+.entry-art .little-icon{position:absolute;right:16px;bottom:12px;font-size:30px;transform:rotate(8deg)}
+.entry-art .floating-oni{position:absolute;top:8px;right:14px;font-size:30px;animation:float 3.8s ease-in-out infinite}
+.entry-title{font-size:18px;font-weight:bold;margin:0 0 7px}
+.entry-description{font-size:13px;line-height:1.7;color:#718075;margin:0 0 14px;min-height:44px}
+.entry-cta{
+  display:inline-block;border-radius:999px;padding:9px 20px;
+  background:#66866c;color:#fff;font-size:14px;font-weight:bold;
+  margin-top:auto;box-shadow:0 3px 0 #4e6d54
+}
+@media(max-width:520px){
+ .game-entry-grid{grid-template-columns:1fr;max-width:340px;gap:14px}
+ .entry-art{min-height:130px}
+}
+
+/* アイテム選択 */
+.item-area{
+  margin-top:22px;padding:18px;
+  background:#fff;border:1px solid #e2e2d4;border-radius:16px
+}
+.selected-oni{
+  text-align:center;background:#fff1d9;border-radius:12px;
+  padding:13px;margin:12px 0 20px;font-size:19px;font-weight:bold
+}
+.selected-oni small{
+  display:block;font-size:12px;color:#87684d;margin-bottom:4px
+}
+.item-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;margin-top:14px
+}
+.item-button{
+  min-height:100px;border:2px solid #e1e5d9;
+  border-radius:13px;background:#fff;
+  color:var(--ink);cursor:pointer;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:7px;
+  font-size:15px;font-weight:bold;
+}
+.item-button .emoji{font-size:30px}
+.item-button:hover{background:#f7f8ef}
+.item-button.selected{
+  background:#e8f1e4;border-color:#66866c;
+}
+.item-button:disabled{opacity:.4;cursor:default}
+.selection-count{
+  text-align:center;margin:18px 0 10px;
+  color:#52735a;font-weight:bold
+}
+.action-button{
+  display:block;width:100%;max-width:320px;
+  margin:12px auto 0;padding:13px 18px;
+  border:0;border-radius:999px;
+  background:#66866c;color:white;
+  font-size:16px;font-weight:bold;cursor:pointer;
+}
+.action-button:disabled{background:#b8c2b5;cursor:default}
+.reset-button{
+  display:block;margin:12px auto 0;
+  border:0;background:transparent;color:#66866c;
+  text-decoration:underline;cursor:pointer;font-size:14px
+}
+.result{
+  display:none;margin-top:20px;padding:20px;
+  border-radius:14px;background:#fff6df;
+  border:1px solid #e5d4a7;text-align:center;
+}
+.result.show{display:block;animation:appear .3s ease}
+.result h3{font-size:22px;color:#76552d;margin:8px 0}
+.result p{line-height:1.8}
+.result .book-icon{font-size:36px}
+
+@media(max-width:560px){
+  header{padding-top:20px}
+  .lead{font-size:14px}
+  .map-card{padding:10px;border-radius:17px}
+  .pin-label{font-size:10px}
+  .item-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .category-list,.being-list{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<header>
+ <div class="kicker">おはなしの森を たんけんしよう</div>
+ <h1>日本のふしぎなそんざい</h1>
+ <p class="lead">
+ 世界には、ふしぎな生きものや、ちょっとこわい存在がいっぱい。<br>
+ 地図の印を押して、どんなものがいるのか見てみよう。
+ </p>
+ <div class="balloon-wrap" aria-hidden="true">
+  <div class="balloon">🎈</div>
+ </div>
+</header>
+
+<main>
+<section class="map-card" aria-label="世界地図">
+ <p class="map-title">日本の昔話を探そう</p>
+ <p class="map-note">遊び方を選んでね</p>
+
+
+ <div class="detail" id="detail" aria-live="polite">
+  <h2 id="region-title"></h2>
+  <p id="region-description"></p>
+  <div class="examples" id="region-examples"></div>
+
+
+  <!-- 地域を選んだあと、遊び方を選ぶ -->
+  <div id="game-modes" hidden>
+   <h2 style="margin-top:22px;text-align:center">どちらの遊びをする？</h2>
+   <div class="game-entry-grid">
+
+
+
+    <a class="game-entry-card" id="items-link" href="items.html">
+     <div class="entry-art item-art" aria-hidden="true">
+      <span class="big-icon">🎁</span><span class="little-icon">✨</span>
+     </div>
+     <p class="entry-title">アイテムから探す</p>
+     <p class="entry-description">アイテムを選んで、<br>何のお話か探そう</p>
+     <span class="entry-cta">遊んでみる →</span>
+    </a>
+    <a class="game-entry-card" id="titles-link" href="titles.html">
+     <div class="entry-art title-art" aria-hidden="true">
+      <span class="big-icon">📖</span><span class="floating-oni">👹</span>
+     </div>
+     <p class="entry-title">タイトルから探す</p>
+     <p class="entry-description">お話を選んで、<br>登場するアイテムを探そう</p>
+     <span class="entry-cta">遊んでみる →</span>
+    </a>
+   </div>
+  </div>
+ </div>
+</section>
+
+<div style="text-align:center">
+ <a class="back" href="../../../index.html">← 昔話の森にもどる</a>
+</div>
+</main>
+
+<footer>昔話の森 ― 世界の物語をたずねる旅</footer>
+
+<script>
+// 地域ごとの説明
+const regions = {
+ americas:{
+  title:"アメリカ大陸",
+  description:"動物が人間のように話したり、知恵を使って大活躍したりする物語があります。",
+  examples:["アナンシ（西アフリカに起源をもつクモの物語）","北米先住民の動物の物語"]
+ },
+ europe:{
+  title:"ヨーロッパ",
+  description:"森や家の中、山の向こうには、人間を助けたり、困らせたりする不思議な存在がいます。",
+  examples:["ババヤガー（スラブの昔話）","トロル（北欧の伝承）","小人や妖精"]
+ },
+ africa:{
+  title:"アフリカ",
+  description:"動物たちが知恵くらべをする話や、不思議な力をもつ存在が登場する物語があります。",
+  examples:["アナンシ（クモの物語）","ライオンやウサギなどの動物たち"]
+ },
+
+asia:{
+  title:"アジア（日本以外）",
+  description:"日本以外のアジアの地域を旅します。さまざまな国や地域に伝わる昔話や、不思議な存在に出会いましょう。",
+  examples:["アジアの昔話","不思議な存在","動物や人々の物語"]
+},
+
+japan:{
+  title:"日本",
+  description:"日本の昔話の世界を旅します。鬼や天狗、山の不思議な存在、昔話に登場する人々に出会いましょう。",
+  examples:["三枚のお札","大工と鬼六","こぶとりじいさん","桃太郎"]
+}, oceania:{
+  title:"オセアニア",
+  description:"島々には、自然や土地の由来を伝える物語、動物や精霊が登場する伝承があります。",
+  examples:["ドリームタイムの物語（オーストラリア先住民）","精霊や祖先にまつわる伝承"]
+ }
+};
+
+// 画面の部品
+const detail=document.getElementById("detail");
+const title=document.getElementById("region-title");
+const description=document.getElementById("region-description");
+const examples=document.getElementById("region-examples");
+const gameModes=document.getElementById("game-modes");
+const itemsLink=document.getElementById("items-link");
+const titlesLink=document.getElementById("titles-link");
+
+// 地域を表示する
+function showRegion(key){
+ const item=regions[key];
+ if(!item)return;
+
+ document.querySelectorAll(".pin").forEach(pin=>{
+  pin.classList.toggle("active",pin.dataset.region===key);
+ });
+
+ title.textContent=item.title;
+ description.textContent=item.description;
+ examples.replaceChildren();
+
+ item.examples.forEach(name=>{
+  const span=document.createElement("span");
+  span.className="example";
+  span.textContent=name;
+  examples.appendChild(span);
+ });
+
+ // 選んだ地域を、次のゲームページへ引き継ぐ
+ itemsLink.href="items.html?region="+encodeURIComponent(key);
+ titlesLink.href="titles.html?region="+encodeURIComponent(key);
+ gameModes.hidden=false;
+
+ detail.classList.add("show");
+ detail.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+// 地図のマークをクリックしたとき
+document.querySelectorAll(".pin").forEach(pin=>{
+ pin.addEventListener("click",()=>{
+  showRegion(pin.dataset.region);
+ });
+
+ pin.addEventListener("keydown",event=>{
+  if(event.key==="Enter"||event.key===" "){
+   event.preventDefault();
+   showRegion(pin.dataset.region);
+  }
+ });
+});
+</script>
+</body>
+</html>

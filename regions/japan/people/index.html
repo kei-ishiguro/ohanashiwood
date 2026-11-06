@@ -1,0 +1,472 @@
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>人間たち｜昔話の森</title>
+
+<style>
+:root {
+    --ink: #35483d;
+    --green: #66866c;
+    --cream: #f7f4e9;
+    --paper: #fffdf6;
+    --line: #dce4d5;
+    --brown: #8b7355;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family:
+        "Yu Mincho",
+        "Hiragino Mincho ProN",
+        "Noto Serif JP",
+        serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.8;
+}
+
+header {
+    text-align: center;
+    padding: 35px 20px 15px;
+}
+
+header h1 {
+    font-size: clamp(25px, 5vw, 34px);
+    margin: 0;
+    letter-spacing: 0.08em;
+}
+
+header p {
+    margin: 10px 0 0;
+    color: #71816e;
+}
+
+main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 森の案内 */
+
+.intro {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(53, 72, 61, 0.05);
+}
+
+.intro .emoji {
+    font-size: 42px;
+}
+
+.intro h2 {
+    font-size: 21px;
+    margin: 5px 0 10px;
+}
+
+.intro p {
+    margin: 0;
+    font-size: 15px;
+}
+
+/* 人物カード */
+
+.people-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.person-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px 10px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--ink);
+    font-family: inherit;
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
+}
+
+.person-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(53, 72, 61, 0.12);
+}
+
+.person-card.selected {
+    background: #e8f0e5;
+    border: 2px solid var(--green);
+    box-shadow: 0 5px 15px rgba(102, 134, 108, 0.15);
+}
+
+.person-emoji {
+    font-size: 42px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.person-name {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.person-note {
+    font-size: 12px;
+    color: #7b8978;
+    margin-top: 3px;
+}
+
+/* 昔話の表示 */
+
+.story-area {
+    margin-top: 35px;
+    padding: 25px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    display: none;
+}
+
+.story-area.show {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+.story-area h2 {
+    text-align: center;
+    font-size: 22px;
+    margin-top: 0;
+}
+
+.story-area .message {
+    text-align: center;
+    font-size: 14px;
+    color: #71816e;
+    margin-bottom: 20px;
+}
+
+.story-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.story-title {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #edf1e7;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    font-size: 15px;
+}
+
+footer {
+    text-align: center;
+    padding: 35px 15px;
+    font-size: 13px;
+    color: #81907c;
+}
+
+.back-button {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 10px 22px;
+    border-radius: 30px;
+    background: var(--green);
+    color: white;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.back-button:hover {
+    background: #4e7055;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (min-width: 600px) {
+    .people-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>👵 昔話の人間たち</h1>
+    <p>昔話の森で、どんな人に出会うかな？</p>
+</header>
+
+<main>
+
+    <section class="intro">
+        <div class="emoji">🌳</div>
+
+        <h2>人間たちの世界へようこそ</h2>
+
+        <p>
+            おじいさん、おばあさん、若者、お姫さま……。<br>
+            気になる人を選んでみよう。<br>
+            その人が登場する昔話が見つかるよ。
+        </p>
+    </section>
+
+    <section class="people-grid" id="peopleGrid">
+
+        <button class="person-card" data-person="grandfather">
+            <span class="person-emoji">👴</span>
+            <span class="person-name">おじいさん</span>
+            <span class="person-note">どんなおじいさん？</span>
+        </button>
+
+        <button class="person-card" data-person="grandmother">
+            <span class="person-emoji">👵</span>
+            <span class="person-name">おばあさん</span>
+            <span class="person-note">知恵のある人も</span>
+        </button>
+
+        <button class="person-card" data-person="young">
+            <span class="person-emoji">🧑</span>
+            <span class="person-name">若者</span>
+            <span class="person-note">冒険する人</span>
+        </button>
+
+        <button class="person-card" data-person="princess">
+            <span class="person-emoji">👸</span>
+            <span class="person-name">お姫さま</span>
+            <span class="person-note">美しいお姫さま</span>
+        </button>
+
+        <button class="person-card" data-person="child">
+            <span class="person-emoji">🧒</span>
+            <span class="person-name">子ども</span>
+            <span class="person-note">小さな主人公</span>
+        </button>
+
+        <button class="person-card" data-person="samurai">
+            <span class="person-emoji">🥷</span>
+            <span class="person-name">侍・武士</span>
+            <span class="person-note">勇ましい人</span>
+        </button>
+
+        <button class="person-card" data-person="monk">
+            <span class="person-emoji">🙏</span>
+            <span class="person-name">和尚さん</span>
+            <span class="person-note">お寺の人</span>
+        </button>
+
+        <button class="person-card" data-person="craftsman">
+            <span class="person-emoji">🪚</span>
+            <span class="person-name">職人</span>
+            <span class="person-note">ものを作る人</span>
+        </button>
+
+    </section>
+
+    <section class="story-area" id="storyArea">
+
+        <h2 id="storyHeading">📖 昔話をさがそう</h2>
+
+        <p class="message">
+            この人が登場する昔話だよ。
+        </p>
+
+        <div class="story-list" id="storyList"></div>
+
+    </section>
+
+    <div style="text-align:center;">
+        <a href="index.html" class="back-button">
+            ← 昔話の森にもどる
+        </a>
+    </div>
+
+</main>
+
+<footer>
+    昔話の森 ― 世界の物語をたずねる旅
+</footer>
+
+<script>
+
+// 人物ごとの昔話データ
+const people = {
+
+    grandfather: {
+        name: "おじいさん",
+        stories: [
+            "こぶとりじいさん",
+            "花咲かじいさん",
+            "笠地蔵",
+            "大工と鬼六",
+            "舌切りすずめ",
+            "分福茶釜"
+        ]
+    },
+
+    grandmother: {
+        name: "おばあさん",
+        stories: [
+            "三枚のお札",
+            "笠地蔵",
+            "花咲かじいさん",
+            "舌切りすずめ",
+            "かちかち山"
+        ]
+    },
+
+    young: {
+        name: "若者",
+        stories: [
+            "桃太郎",
+            "浦島太郎",
+            "一寸法師",
+            "大工と鬼六",
+            "三枚のお札"
+        ]
+    },
+
+    princess: {
+        name: "お姫さま",
+        stories: [
+            "かぐや姫",
+            "舌切りすずめ",
+            "浦島太郎"
+        ]
+    },
+
+    child: {
+        name: "子ども",
+        stories: [
+            "三枚のお札",
+            "一寸法師",
+            "桃太郎",
+            "瓜子姫"
+        ]
+    },
+
+    samurai: {
+        name: "侍・武士",
+        stories: [
+            "桃太郎",
+            "浦島太郎",
+            "一寸法師"
+        ]
+    },
+
+    monk: {
+        name: "和尚さん",
+        stories: [
+            "三枚のお札",
+            "和尚と小僧",
+            "舌切りすずめ"
+        ]
+    },
+
+    craftsman: {
+        name: "職人",
+        stories: [
+            "大工と鬼六",
+            "一寸法師",
+            "鍛冶屋の話"
+        ]
+    }
+
+};
+
+
+// カードを選んだときの処理
+
+const cards = document.querySelectorAll(".person-card");
+
+const storyArea = document.getElementById("storyArea");
+
+const storyHeading = document.getElementById("storyHeading");
+
+const storyList = document.getElementById("storyList");
+
+
+cards.forEach(card => {
+
+    card.addEventListener("click", () => {
+
+        // すべてのカードの選択を解除
+        cards.forEach(c => {
+            c.classList.remove("selected");
+        });
+
+        // 選んだカードを強調
+        card.classList.add("selected");
+
+        // 人物データを取得
+        const personId = card.dataset.person;
+
+        const person = people[personId];
+
+        // 見出しを変更
+        storyHeading.textContent =
+            "📖 " + person.name + "が登場する昔話";
+
+        // 昔話一覧をいったん空にする
+        storyList.innerHTML = "";
+
+        // 昔話を表示
+        person.stories.forEach(story => {
+
+            const storyItem = document.createElement("div");
+
+            storyItem.className = "story-title";
+
+            storyItem.textContent = "📚 " + story;
+
+            storyList.appendChild(storyItem);
+
+        });
+
+        // 昔話エリアを表示
+        storyArea.classList.add("show");
+
+        // 選んだ昔話までスクロール
+        storyArea.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
+```

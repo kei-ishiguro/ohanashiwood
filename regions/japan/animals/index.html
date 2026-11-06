@@ -1,0 +1,418 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日本の動物たち｜昔話の森</title>
+
+<style>
+:root{
+  --ink:#35483d;
+  --green:#66866c;
+  --cream:#f7f4e9;
+  --paper:#fffdf6;
+  --line:#dce4d5;
+  --gold:#d9b76b;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:"Yu Gothic","Meiryo",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at top,#fffdf5 0%,#f2f4e8 70%);
+  min-height:100vh;
+}
+
+header{
+  text-align:center;
+  padding:35px 20px 20px;
+}
+
+header h1{
+  font-size:clamp(25px,5vw,38px);
+  margin:0;
+  letter-spacing:.08em;
+}
+
+header p{
+  font-size:14px;
+  line-height:1.8;
+  margin:12px 0 0;
+  color:#718071;
+}
+
+main{
+  max-width:900px;
+  margin:0 auto;
+  padding:15px 20px 50px;
+}
+
+.intro{
+  text-align:center;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:24px 18px;
+  margin-bottom:25px;
+  box-shadow:0 5px 15px rgba(53,72,61,.06);
+}
+
+.intro .forest{
+  font-size:35px;
+  margin-bottom:10px;
+}
+
+.intro h2{
+  font-size:20px;
+  margin:0 0 12px;
+}
+
+.intro p{
+  font-size:14px;
+  line-height:1.9;
+  margin:0;
+}
+
+.animal-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+
+.animal-card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:20px 14px;
+  text-align:center;
+  cursor:pointer;
+  color:var(--ink);
+  transition:transform .2s,box-shadow .2s;
+  box-shadow:0 4px 12px rgba(53,72,61,.05);
+}
+
+.animal-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 8px 18px rgba(53,72,61,.10);
+}
+
+.animal-card.selected{
+  border:2px solid var(--green);
+  background:#edf3e8;
+}
+
+.animal-emoji{
+  display:block;
+  font-size:45px;
+  margin-bottom:10px;
+}
+
+.animal-name{
+  display:block;
+  font-size:17px;
+  font-weight:bold;
+}
+
+.animal-hint{
+  display:block;
+  font-size:12px;
+  color:#819080;
+  margin-top:7px;
+}
+
+.story-area{
+  display:none;
+  margin-top:28px;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:25px 20px;
+  box-shadow:0 5px 15px rgba(53,72,61,.06);
+}
+
+.story-area.show{
+  display:block;
+  animation:fadeIn .4s ease;
+}
+
+.story-area h2{
+  text-align:center;
+  font-size:21px;
+  margin:0 0 18px;
+}
+
+.story-list{
+  display:grid;
+  gap:10px;
+}
+
+.story-button{
+  background:#f2f4e9;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:15px;
+  font-size:15px;
+  color:var(--ink);
+  text-align:left;
+}
+
+.story-button span{
+  margin-right:8px;
+}
+
+.message{
+  text-align:center;
+  font-size:13px;
+  line-height:1.8;
+  color:#7b8979;
+  margin-top:18px;
+}
+
+.back{
+  display:block;
+  width:fit-content;
+  margin:35px auto 0;
+  padding:12px 22px;
+  border-radius:30px;
+  background:#e5ecdf;
+  color:var(--ink);
+  text-decoration:none;
+  font-size:14px;
+  transition:background .2s;
+}
+
+.back:hover{
+  background:#d5e2cf;
+}
+
+footer{
+  text-align:center;
+  padding:20px;
+  font-size:12px;
+  color:#849080;
+}
+
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+@media(min-width:600px){
+  .animal-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🐾 日本の動物たち</h1>
+  <p>
+    昔話の森をめぐる旅<br>
+    動物たちに出会ってみよう
+  </p>
+</header>
+
+<main>
+
+  <section class="intro">
+    <div class="forest">🌳 🐿️ 🌳</div>
+    <h2>森のなかには、だれがいる？</h2>
+    <p>
+      日本の昔話には、たくさんの動物たちが登場します。<br>
+      気になる動物を選んで、どんなお話に出てくるか<br>
+      たずねてみましょう。
+    </p>
+  </section>
+
+  <section class="animal-grid" id="animal-grid">
+  </section>
+
+  <section class="story-area" id="story-area">
+    <h2 id="story-title">昔話を見つけよう</h2>
+
+    <div class="story-list" id="story-list">
+    </div>
+
+    <p class="message">
+      どんなお話が待っているかな？
+    </p>
+  </section>
+
+
+  <a class="back" href="../../../mysterious-map/index.html">
+    ← ちいきをえらびなおす
+  </a>
+  <a class="back" href="../../../index.html">
+    ← 昔話の森にもどる
+  </a>
+
+
+</main>
+
+<footer>
+  昔話の森 ― 日本の動物たち
+</footer>
+
+<script>
+
+// 動物と昔話のデータ
+const animals = [
+  {
+    id:"fox",
+    name:"きつね",
+    emoji:"🦊",
+    hint:"ふしぎな術を使うことも",
+    stories:["きつねの嫁入り"]
+  },
+  {
+    id:"tanuki",
+    name:"たぬき",
+    emoji:"🦝",
+    hint:"いたずら好きな動物",
+    stories:["かちかち山"]
+  },
+  {
+    id:"rabbit",
+    name:"うさぎ",
+    emoji:"🐇",
+    hint:"知恵をはたらかせる動物",
+    stories:["因幡の白うさぎ","かちかち山"]
+  },
+  {
+    id:"monkey",
+    name:"さる",
+    emoji:"🐒",
+    hint:"動物たちの仲間",
+    stories:["さるかに合戦"]
+  },
+  {
+    id:"turtle",
+    name:"かめ",
+    emoji:"🐢",
+    hint:"ゆっくり歩く動物",
+    stories:["浦島太郎"]
+  },
+  {
+    id:"crane",
+    name:"つる",
+    emoji:"🕊️",
+    hint:"美しい羽を持つ鳥",
+    stories:["鶴の恩返し"]
+  },
+  {
+    id:"mouse",
+    name:"ねずみ",
+    emoji:"🐭",
+    hint:"小さな動物",
+    stories:["おむすびころりん"]
+  },
+  {
+    id:"cat",
+    name:"ねこ",
+    emoji:"🐱",
+    hint:"身近な動物",
+    stories:["猫の恩返し"]
+  }
+];
+
+const animalGrid=document.getElementById("animal-grid");
+const storyArea=document.getElementById("story-area");
+const storyTitle=document.getElementById("story-title");
+const storyList=document.getElementById("story-list");
+
+// 動物のカードを作る
+function createAnimalCards(){
+
+  animalGrid.replaceChildren();
+
+  animals.forEach(animal=>{
+
+    const button=document.createElement("button");
+
+    button.type="button";
+    button.className="animal-card";
+    button.dataset.animal=animal.id;
+
+    const emoji=document.createElement("span");
+    emoji.className="animal-emoji";
+    emoji.textContent=animal.emoji;
+
+    const name=document.createElement("span");
+    name.className="animal-name";
+    name.textContent=animal.name;
+
+    const hint=document.createElement("span");
+    hint.className="animal-hint";
+    hint.textContent=animal.hint;
+
+    button.append(emoji,name,hint);
+
+    button.addEventListener("click",()=>{
+      chooseAnimal(animal);
+    });
+
+    animalGrid.appendChild(button);
+
+  });
+
+}
+
+// 動物を選んだとき
+function chooseAnimal(animal){
+
+  document.querySelectorAll(".animal-card").forEach(button=>{
+    button.classList.toggle(
+      "selected",
+      button.dataset.animal===animal.id
+    );
+  });
+
+  storyTitle.textContent=
+    animal.emoji+" "+animal.name+"が出てくる昔話";
+
+  storyList.replaceChildren();
+
+  animal.stories.forEach(story=>{
+
+    const button=document.createElement("div");
+    button.className="story-button";
+
+    const span=document.createElement("span");
+    span.textContent="📖";
+
+    button.append(span,document.createTextNode(story));
+
+    storyList.appendChild(button);
+
+  });
+
+  storyArea.classList.add("show");
+
+  storyArea.scrollIntoView({
+    behavior:"smooth",
+    block:"nearest"
+  });
+
+}
+
+createAnimalCards();
+
+</script>
+
+</body>
+</html>

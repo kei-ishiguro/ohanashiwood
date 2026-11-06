@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>アイテムから探す｜昔話の森</title>
+<style>
+:root{
+  --ink:#35483d;--green:#66866c;--paper:#fffaf0;
+  --gold:#d8ad5c;--soft:#edf2e7;--brown:#87684d;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;color:var(--ink);
+  font-family:"Yu Gothic","Meiryo",sans-serif;
+  background:linear-gradient(180deg,#e9f3e1 0,#fffaf0 390px);
+  min-height:100vh;
+}
+header{text-align:center;padding:25px 16px 8px}
+.kicker{font-size:14px;letter-spacing:.16em;color:#718b7b}
+h1{font-family:serif;font-size:clamp(27px,5vw,39px);margin:8px 0;color:#496b54}
+.lead{font-size:15px;line-height:1.9;margin:0 auto;max-width:650px}
+.balloon{font-size:43px;margin:15px 0 5px;animation:float 3.8s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(5px) rotate(-4deg)}50%{transform:translateY(-7px) rotate(4deg)}}
+main{max-width:900px;margin:0 auto;padding:12px 18px 40px}
+.panel{
+  background:rgba(255,255,255,.9);border:1px solid #e5dfce;border-radius:24px;
+  padding:clamp(15px,3vw,28px);box-shadow:0 8px 26px #52634a14;
+}
+.instructions{text-align:center;margin:0 0 10px;font-size:16px;font-weight:bold}
+.subtext{text-align:center;color:#718075;font-size:13px;line-height:1.8;margin:0}
+.item-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:22px}
+.item-button{
+  min-height:118px;border:2px solid #e1e5d9;border-radius:16px;background:#fff;
+  color:var(--ink);cursor:pointer;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:bold;
+  transition:transform .18s,background .18s,border-color .18s;
+}
+.item-button:hover{transform:translateY(-3px);background:#f8f8ef}
+.item-button.selected{background:#e8f1e4;border-color:#66866c;box-shadow:0 3px 10px #66866c20}
+.item-button:disabled{opacity:.45;cursor:default;transform:none}
+.emoji{font-size:34px}
+.selection-count{text-align:center;margin:20px 0 10px;color:#52735a;font-weight:bold}
+.action-button{
+  display:block;width:100%;max-width:330px;margin:12px auto 0;padding:13px 18px;
+  border:0;border-radius:999px;background:#66866c;color:white;
+  font-size:16px;font-weight:bold;cursor:pointer;
+}
+.action-button:disabled{background:#b8c2b5;cursor:default}
+.reset-button{
+  display:block;margin:12px auto 0;border:0;background:transparent;color:#66866c;
+  text-decoration:underline;cursor:pointer;font-size:14px;
+}
+.result{
+  display:none;margin-top:22px;padding:20px;border-radius:16px;
+  background:#fff6df;border:1px solid #e5d4a7;text-align:center;
+}
+.result.show{display:block;animation:appear .3s ease}
+@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.book-icon{font-size:38px}
+.result h2{
+  white-space: pre-line;font-family:serif;font-size:24px;color:#76552d;margin:8px 0}
+
+.result p{
+  white-space: pre-line;line-height:1.9;margin:8px 0}
+
+.result .note{font-size:13px;color:#7b877b}
+.back{
+  display:inline-block;margin-top:20px;color:#52735a;text-decoration:none;font-weight:bold;
+}
+.back:hover{text-decoration:underline}
+footer{text-align:center;padding:0 16px 28px;color:#7b877b;font-size:13px}
+@media(max-width:560px){
+  header{padding-top:18px}.lead{font-size:14px}
+  .item-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .item-button{min-height:105px}
+  .panel{padding:13px;border-radius:18px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">おはなしの森を たんけんしよう</div>
+  <h1>アイテムから探す</h1>
+  <p class="lead">昔話に出てくるアイテムを選んでみよう。<br>手がかりを3つ集めると、何のお話かわかるかも！</p>
+  <div class="balloon" aria-hidden="true">🎈</div>
+</header>
+
+<main>
+<section class="panel">
+  <p class="instructions">気になるアイテムを3つ選んでね</p>
+  <p class="subtext">選んだアイテムが、昔話を見つける手がかりになるよ。</p>
+
+  <div class="item-grid" id="item-grid"></div>
+
+  <div class="selection-count" id="selection-count" aria-live="polite">0 / 3 個選択中</div>
+  <button class="action-button" id="find-story" disabled>この手がかりでお話をさがす</button>
+  <button class="reset-button" id="reset-items">選びなおす</button>
+
+  <div class="result" id="result" aria-live="polite">
+    <div class="book-icon">📖</div>
+    <h2 id="result-title"></h2>
+    <p id="result-message"></p>
+    <p class="note" id="result-note"></p>
+  </div>
+</section>
+
+<div style="text-align:center">
+  <a class="back" href="index.html">← 不思議な存在の地図にもどる</a>
+</div>
+</main>
+
+<footer>昔話の森 ― 世界の物語をたずねる旅</footer>
+
+<script>
+// アイテム一覧。追加するときは、この配列に項目を足します。
+
+const items = [
+  {name:"こぶ",emoji:"🔴"},
+  {name:"踊り",emoji:"💃"},
+  {name:"大工",emoji:"🪚"},
+  {name:"橋",emoji:"🌉"},
+  {name:"山",emoji:"⛰️"},
+  {name:"太鼓",emoji:"🥁"},
+  {name:"めだま",emoji:"👁️"},
+  {name:"宝物",emoji:"💎"},
+  {name:"鬼",emoji:"👹"},
+  {name:"おじいさん",emoji:"👴"},
+  {name:"歌",emoji:"🎵"},
+  {name:"おばあさん",emoji:"👵"},
+
+  {name:"小僧",emoji:"👦"},
+  {name:"たね",emoji:"🫘"},
+  {name:"たぬき",emoji:"🦝"},
+
+  {name:"お札",emoji:"🧧"},
+  {name:"ひょうたん",emoji:"🥜"},
+  
+  {name:"鬼婆",emoji:"👹"},
+  {name:"栗",emoji:"🌰"},
+  {name:"柿",emoji:"🍂"},
+
+  {name:"鳥",emoji:"🐦"}
+
+
+];
+
+// 3つのアイテムと昔話の対応表。
+// 新しい昔話を追加するときは、items とこの対応表に登録します。
+const storyPatterns = [
+  {
+   items:["こぶ","踊り","太鼓","山","鬼","おじいさん","歌","お堂"],
+    title:"『こぶとりじいさん』",
+    message:"鬼たちの宴に招かれたおじいさん。鬼たちと踊ったおじいさんのこぶは、どうなったのでしょう？",
+    note:"手がかりがぴったり！昔話の世界を思い出してみよう。"
+  },
+  {
+    items:["大工","橋","山","鬼","めだま","歌"],
+    title:"『大工と鬼六』",
+    message:"川に橋をかけることになった大工。鬼との約束とは、どんなものだったのでしょう？",
+    note:"手がかりがぴったり！お話を聞いたことがあるかな？"
+  },
+
+  {
+    items:["歌","おじいさん","山","鳥","宝物"],
+    title:"『とりのみじい』",
+    message:"面白い声で鳴くことりをみつけたおじいさん。そのことりをのみこんでしまいます。さあ、それからどうなるのかな？",
+    note:"手がかりがぴったり！お話を聞いたことがあるかな？"
+  },
+
+
+
+{
+  items:["山","小僧","お札","鬼婆","栗","柿"],
+  title:"『三枚のお札』",
+  message:"山へ出かけた小僧。山の中で出会った恐ろしい鬼婆から逃げるため、お札を使います。",
+  note:"山・小僧・お札・鬼婆。どんな場面が思い浮かぶかな？"
+}
+
+
+];
+
+const itemGrid=document.getElementById("item-grid");
+const selectionCount=document.getElementById("selection-count");
+const findStory=document.getElementById("find-story");
+const result=document.getElementById("result");
+const resultTitle=document.getElementById("result-title");
+const resultMessage=document.getElementById("result-message");
+const resultNote=document.getElementById("result-note");
+let selectedItems=[];
+
+function createItemButtons(){
+  itemGrid.replaceChildren();
+  items.forEach(item=>{
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="item-button";
+    button.dataset.item=item.name;
+    button.setAttribute("aria-pressed","false");
+
+    const emoji=document.createElement("span");
+    emoji.className="emoji";
+    emoji.textContent=item.emoji;
+    const name=document.createElement("span");
+    name.textContent=item.name;
+    button.append(emoji,name);
+
+    button.addEventListener("click",()=>toggleItem(item.name));
+    itemGrid.appendChild(button);
+  });
+}
+
+function toggleItem(name){
+  if(selectedItems.includes(name)){
+    selectedItems=selectedItems.filter(item=>item!==name);
+  }else{
+    if(selectedItems.length>=3)return;
+    selectedItems.push(name);
+  }
+  updateSelection();
+}
+
+function updateSelection(){
+  document.querySelectorAll(".item-button").forEach(button=>{
+    const selected=selectedItems.includes(button.dataset.item);
+    button.classList.toggle("selected",selected);
+    button.setAttribute("aria-pressed",String(selected));
+    button.disabled=!selected && selectedItems.length===3;
+  });
+  selectionCount.textContent=selectedItems.length+" / 3 個選択中";
+  findStory.disabled=selectedItems.length!==3;
+  result.classList.remove("show");
+}
+
+document.getElementById("reset-items").addEventListener("click",()=>{
+  selectedItems=[];
+  updateSelection();
+  result.classList.remove("show");
+});
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+findStory.addEventListener("click",()=>{
+  if(selectedItems.length!==3) return;
+
+  const selected=selectedItems.slice();
+
+  // 選んだ3つの手がかりに合うお話をすべて探す
+  const matchedStories=storyPatterns.filter(story=>{
+    return selected.every(item=>story.items.includes(item));
+  });
+
+  if(matchedStories.length>0){
+
+    // 見つかったお話のタイトルを表示
+    resultTitle.textContent=
+      matchedStories.map(story=>story.title).join("\n");
+
+    // 見つかったお話のメッセージを表示
+    resultMessage.textContent=
+      matchedStories.map(story=>story.message).join("\n\n");
+
+    // お話が1つか、複数かで説明を変える
+    if(matchedStories.length===1){
+      resultNote.textContent=matchedStories[0].note;
+    }else{
+      resultNote.textContent=
+        "複数のお話が見つかったよ！どちらのお話も、選んだ手がかりとつながっているよ。";
+    }
+
+  }else{
+
+    // 正解のお話が見つからなかったとき
+    resultTitle.textContent="もう少し考えてみよう！";
+    resultMessage.textContent=
+      "選んだ手がかりから、どんなお話が思い浮かぶかな？";
+    resultNote.textContent=
+      "別の手がかりを選んでみてね。";
+
+  }
+
+  result.classList.add("show");
+  result.scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
+});
+
+
+
+createItemButtons();
+updateSelection();
+</script>
+</body>
+</html>

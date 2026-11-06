@@ -1,0 +1,403 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>昔話の森 - 世界の物語を探す旅</title>
+
+    <style>
+        /* ページ全体 */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Yu Mincho", "Hiragino Mincho ProN",
+                         "Noto Serif JP", serif;
+            color: #49351f;
+            background:
+                radial-gradient(ellipse at 20% 20%, #fff9e9, transparent 55%),
+                radial-gradient(ellipse at 80% 80%, #d8c49d, transparent 60%),
+                #eadbb9;
+        }
+
+        /* 外側の古い紙のような枠 */
+        .page {
+            max-width: 1000px;
+            min-height: 90vh;
+            margin: 30px auto;
+            padding: 30px;
+            border: 2px solid #9b7950;
+            outline: 1px solid #b99b70;
+            outline-offset: -9px;
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(120, 90, 50, 0.025) 0px,
+                    rgba(120, 90, 50, 0.025) 1px,
+                    transparent 1px,
+                    transparent 5px
+                ),
+                #f4e8cc;
+            box-shadow: 0 10px 30px rgba(65, 43, 20, 0.25);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 小さな飾り文字 */
+        .top-label {
+            margin-top: 25px;
+            font-size: 14px;
+            letter-spacing: 0.3em;
+            color: #86663e;
+        }
+
+        /* タイトル */
+        h1 {
+            margin: 15px 0 5px;
+            font-size: clamp(38px, 7vw, 62px);
+            letter-spacing: 0.15em;
+            color: #604323;
+            text-shadow: 2px 2px 0 #dfc99e;
+        }
+
+        .subtitle {
+            margin: 10px 0 25px;
+            font-size: 18px;
+            letter-spacing: 0.12em;
+            color: #80613d;
+        }
+
+        /* 冒険地図のエリア */
+        .map-area {
+            position: relative;
+            max-width: 760px;
+            height: 340px;
+            margin: 0 auto 25px;
+            border: 1px solid #b99a6c;
+            border-radius: 48% 52% 45% 55% / 55% 45% 55% 45%;
+            overflow: hidden;
+            background:
+                radial-gradient(ellipse at 25% 35%,
+                    rgba(118, 139, 89, 0.30), transparent 23%),
+                radial-gradient(ellipse at 70% 65%,
+                    rgba(118, 139, 89, 0.25), transparent 28%),
+                repeating-radial-gradient(
+                    ellipse at 50% 50%,
+                    transparent 0px,
+                    transparent 18px,
+                    rgba(128, 99, 57, 0.09) 19px,
+                    transparent 20px
+                ),
+                #e8d6ae;
+        }
+
+        /* 地図の飾り */
+        .map-area::before {
+            content: "N";
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            font-size: 20px;
+            color: #80613d;
+        }
+
+        .map-area::after {
+            content: "✥";
+            position: absolute;
+            top: 43px;
+            right: 32px;
+            font-size: 32px;
+            color: #80613d;
+        }
+
+        .map-caption {
+            position: absolute;
+            bottom: 24px;
+            left: 0;
+            right: 0;
+            font-size: 13px;
+            letter-spacing: 0.2em;
+            color: #80613d;
+        }
+
+        /* 気球 */
+        .balloon {
+            position: absolute;
+            top: 48px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 230px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .balloon-body {
+            width: 145px;
+            height: 165px;
+            margin: 0 auto;
+            border-radius: 50% 50% 45% 45%;
+            background:
+                repeating-linear-gradient(
+                    90deg,
+                    #a64e35 0px,
+                    #a64e35 24px,
+                    #e6bd79 24px,
+                    #e6bd79 48px
+                );
+            border: 3px solid #75452d;
+            box-shadow: inset -12px -8px 15px rgba(60, 30, 10, 0.2),
+                        4px 5px 8px rgba(60, 30, 10, 0.2);
+            position: relative;
+        }
+
+        .balloon-body::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%);
+            border-left: 13px solid transparent;
+            border-right: 13px solid transparent;
+            border-top: 22px solid #a64e35;
+        }
+
+        .ropes {
+            width: 75px;
+            height: 28px;
+            margin: -1px auto 0;
+            border-left: 2px solid #704a2c;
+            border-right: 2px solid #704a2c;
+        }
+
+        .basket {
+            width: 57px;
+            height: 34px;
+            margin: 0 auto;
+            background: repeating-linear-gradient(
+                90deg,
+                #9a6537 0px,
+                #9a6537 8px,
+                #c18c51 8px,
+                #c18c51 14px
+            );
+            border: 2px solid #704a2c;
+            border-radius: 3px 3px 8px 8px;
+            box-shadow: 2px 4px 5px rgba(60, 30, 10, 0.2);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(-50%, 0);
+            }
+            50% {
+                transform: translate(-50%, -12px);
+            }
+        }
+
+        /* メインメッセージ */
+        .message {
+            margin: 20px 0;
+            font-size: clamp(19px, 3vw, 25px);
+            line-height: 1.8;
+            color: #654725;
+        }
+
+        .description {
+            font-size: 15px;
+            line-height: 2;
+            color: #80613d;
+        }
+
+        /* 出発ボタン */
+        .start-button {
+            display: inline-block;
+            margin: 25px 0 20px;
+            padding: 16px 48px;
+            border: 2px solid #674628;
+            border-radius: 40px;
+            background: #805b36;
+            color: #fff5df;
+            font-family: inherit;
+            font-size: 20px;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #543a23;
+            transition: 0.2s;
+        }
+
+        .start-button:hover {
+            background: #a27647;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #543a23;
+        }
+
+        .start-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #543a23;
+        }
+
+        /* 次の画面 */
+        #next {
+            margin: 30px auto 10px;
+            padding: 25px;
+            max-width: 650px;
+            border-top: 1px solid #b99a6c;
+        }
+
+        #next[hidden] {
+            display: none;
+        }
+
+        .category-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .category {
+            padding: 18px 8px;
+            border: 1px solid #aa8b60;
+            border-radius: 12px;
+            background: rgba(255, 249, 233, 0.65);
+            font-size: 17px;
+            color: #654725;
+        }
+
+        .category span {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 30px;
+        }
+
+        footer {
+            margin-top: 35px;
+            font-size: 12px;
+            letter-spacing: 0.15em;
+            color: #9b7950;
+        }
+
+        /* スマートフォン向け */
+        @media (max-width: 600px) {
+            .page {
+                margin: 10px;
+                padding: 20px 14px;
+            }
+
+            .map-area {
+                height: 290px;
+            }
+
+            .balloon {
+                top: 30px;
+                transform: translateX(-50%) scale(0.85);
+            }
+
+            .category-list {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .start-button {
+                padding: 14px 30px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="page">
+
+        <div class="top-label">
+            A JOURNEY INTO THE WORLD OF FOLK TALES
+        </div>
+
+        <h1>昔話の森</h1>
+
+        <p class="subtitle">
+            世界の物語を探す旅
+        </p>
+
+        <!-- 冒険地図と気球 -->
+        <div class="map-area">
+
+            <div class="balloon">
+                <div class="balloon-body"></div>
+                <div class="ropes"></div>
+                <div class="basket"></div>
+            </div>
+
+            <div class="map-caption">
+                UNKNOWN LANDS · NEW ADVENTURES
+            </div>
+
+        </div>
+
+        <p class="message">
+            気球に乗って、世界の物語を探しに行こう。
+        </p>
+
+        <p class="description">
+            まだ知らない国、まだ知らない人々、<br>
+            まだ知らない物語が、あなたを待っています。
+        </p>
+
+        <button class="start-button" onclick="startJourney()">
+            🎈 旅に出発する
+        </button>
+
+        <!-- 出発ボタンを押した後に表示 -->
+        <section id="next" hidden>
+            <h2>どんな旅に出かけますか？</h2>
+            <p>気球に乗って、探したいものを選びましょう。</p>
+
+            <div class="category-list">
+                <div class="category">
+                    <span>👹</span>
+                    ふしぎな存在
+                </div>
+
+                <div class="category">
+                    <span>🐻</span>
+                    動物
+                </div>
+
+                <div class="category">
+                    <span>👵</span>
+                    人間
+                </div>
+
+                <div class="category">
+                    <span>🗝️</span>
+                    キーになるアイテム
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            ✦ THE WORLD OF FOLK TALES ✦
+        </footer>
+
+    </main>
+
+    <script>
+        // 出発ボタンを押したときの処理
+        function startJourney() {
+            const nextPage = document.getElementById("next");
+
+            nextPage.hidden = false;
+
+            nextPage.scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+    </script>
+
+</body>
+</html>
