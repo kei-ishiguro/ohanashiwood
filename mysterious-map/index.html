@@ -319,6 +319,19 @@ footer{text-align:center;padding:0 16px 28px;color:#7b877b;font-size:13px}
    </g>
    <text x="445" y="178" class="pin-label">ヨーロッパ</text>
 
+
+
+<!-- ロシア -->
+<g class="pin" role="button" tabindex="0"
+   data-region="russia" aria-label="ロシア">
+  <circle cx="555" cy="115" r="23"/>
+  <text x="555" y="115">🪆</text>
+</g>
+<text x="555" y="148" class="pin-label">ロシア</text>
+
+
+
+
    <g class="pin" role="button" tabindex="0" data-region="africa" aria-label="アフリカ">
     <circle cx="470" cy="285" r="23"/><text x="470" y="285">🦁</text>
    </g>
@@ -354,7 +367,7 @@ footer{text-align:center;padding:0 16px 28px;color:#7b877b;font-size:13px}
 
 
    <g class="pin" role="button" tabindex="0" data-region="oceania" aria-label="オセアニア">
-    <circle cx="745" cy="350" r="23"/><text x="745" y="350">🐉</text>
+    <circle cx="745" cy="350" r="23"/><text x="745" y="350">🐨</text>
    </g>
    <text x="745" y="383" class="pin-label">オセアニア</text>
   </svg>
@@ -551,6 +564,16 @@ document.querySelectorAll(".pin").forEach(pin=>{
    window.location.href="../regions/europe/index.html";
    return;
   }
+
+
+  // ロシアを選んだとき
+  if(pin.dataset.region==="russia"){
+   window.location.href="../regions/russia/index.html";
+   return;
+  }
+
+
+
 
   // アジアを選んだとき
 　if(pin.dataset.region==="asia"){
