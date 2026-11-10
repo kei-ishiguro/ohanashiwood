@@ -113,37 +113,49 @@ footer{text-align:center;padding:0 16px 28px;color:#7b877b;font-size:13px}
 <footer>昔話の森 ― 世界の物語をたずねる旅</footer>
 
 <script>
+
+
+
 // アイテム一覧。追加するときは、この配列に項目を足します。
 
 const items = [
-  {name:"こぶ",emoji:"🔴"},
+
+  {name:"おてら",image:"../../../images/items/otera.png"},
   {name:"踊り",emoji:"💃"},
   {name:"大工",emoji:"🪚"},
   {name:"橋",emoji:"🌉"},
   {name:"山",emoji:"⛰️"},
-  {name:"太鼓",emoji:"🥁"},
+  {name:"くわ",image:"../../../images/items/kuwa.png"},
   {name:"めだま",emoji:"👁️"},
-  {name:"宝物",emoji:"💎"},
-  {name:"鬼",emoji:"👹"},
+  {name:"宝物",image: "../../../images/items/jtakara.png"},
+  {name:"鬼",image: "../../../images/items/oni.png"},
   {name:"おじいさん",emoji:"👴"},
   {name:"歌",emoji:"🎵"},
   {name:"おばあさん",emoji:"👵"},
 
-  {name:"小僧",emoji:"👦"},
+  {name:"こぞうさん",emoji:"👦"},
   {name:"たね",emoji:"🫘"},
-  {name:"たぬき",emoji:"🦝"},
+  {name:"ねずみ",emoji:"🐀"},
 
   {name:"お札",emoji:"🧧"},
-  {name:"ひょうたん",emoji:"🥜"},
+  {name:"ひょうたん",image: "../../../images/items/hyoutan.png"},
   
-  {name:"鬼婆",emoji:"👹"},
+  {name:"やまんば",image: "../../../images/items/yamanba.png"},
+  {name:"おもち",image: "../../../images/items/omochi.png"},
   {name:"栗",emoji:"🌰"},
-  {name:"柿",emoji:"🍂"},
+　{name:"おむすび",emoji:"🍙"},
 
+  {name:"おしょうさん",image: "../../../images/items/osyou.png"},
   {name:"鳥",emoji:"🐦"}
 
 
 ];
+
+
+
+
+
+
 
 // 3つのアイテムと昔話の対応表。
 // 新しい昔話を追加するときは、items とこの対応表に登録します。
@@ -162,19 +174,52 @@ const storyPatterns = [
   },
 
   {
-    items:["歌","おじいさん","山","鳥","宝物"],
+    items:["ねずみ","おばあさん","山","おもち","おじいさん"],
+    title:"『ねずみのすもう』",
+    message:"山でねずみたちがすもうをしているのをみたおじいさん。",
+    note:"手がかりがぴったり！お話を聞いたことがあるかな？"
+  },
+
+
+  {
+    items:["ねずみ","おばあさん","山","おむすび","おじいさん"],
+    title:"『ねずみじょうど』",
+    message:"おじいさんは、にぎりめしをあなにおとしてしまいます。すると、ねずみがあなからでてきて、、、さあ、どうなる？",
+    note:"手がかりがぴったり！お話を聞いたことがあるかな？"
+  },
+
+
+
+
+  {
+    items:["歌","おじいさん","山","鳥","宝物","くわ"],
     title:"『とりのみじい』",
     message:"面白い声で鳴くことりをみつけたおじいさん。そのことりをのみこんでしまいます。さあ、それからどうなるのかな？",
+    note:"手がかりがぴったり！お話を聞いたことがあるかな？"
+  },
+
+  {
+    items:["ひょうたん","おばあさん","たね","鳥","宝物"],
+    title:"『こしおれすずめ』",
+    message:"けがをしたすずめをたすけたおばあさん。げんきになったすずめはなしてやると、もどってきて、何かのたねをおとしていきます。",
+    note:"手がかりがぴったり！お話を聞いたことがあるかな？"
+  },
+
+
+  {
+    items:["おじいさん","おばあさん","鳥","宝物"],
+    title:"『したきりすずめ』",
+    message:"かわいがっていたすずめをさがしに行ったおじいさんは、おみやげをもらってかえってきます。それをみたおばあさんは、、、どうする？",
     note:"手がかりがぴったり！お話を聞いたことがあるかな？"
   },
 
 
 
 {
-  items:["山","小僧","お札","鬼婆","栗","柿"],
+  items:["山","こぞうさん","おしょうさん","おもち","お札","やまんば","栗","おてら"],
   title:"『三枚のお札』",
   message:"山へ出かけた小僧。山の中で出会った恐ろしい鬼婆から逃げるため、お札を使います。",
-  note:"山・小僧・お札・鬼婆。どんな場面が思い浮かぶかな？"
+  note:"山・小僧さん・お札・鬼婆。どんな場面が思い浮かぶかな？"
 }
 
 
@@ -198,12 +243,48 @@ function createItemButtons(){
     button.dataset.item=item.name;
     button.setAttribute("aria-pressed","false");
 
-    const emoji=document.createElement("span");
-    emoji.className="emoji";
-    emoji.textContent=item.emoji;
-    const name=document.createElement("span");
-    name.textContent=item.name;
-    button.append(emoji,name);
+
+
+
+
+
+
+// アイテムの絵を表示
+if(item.image){
+
+  // 画像がある場合
+  const img=document.createElement("img");
+  img.className="emoji";
+  img.src=item.image;
+  img.alt=item.name;
+
+  img.style.width="60px";
+  img.style.height="60px";
+  img.style.objectFit="contain";
+
+  button.appendChild(img);
+
+}else{
+
+  // 画像がない場合は絵文字を表示
+  const emoji=document.createElement("span");
+  emoji.className="emoji";
+  emoji.textContent=item.emoji;
+
+  button.appendChild(emoji);
+
+}
+
+// アイテムの名前を表示
+const name=document.createElement("span");
+name.textContent=item.name;
+
+button.appendChild(name);
+
+
+
+
+
 
     button.addEventListener("click",()=>toggleItem(item.name));
     itemGrid.appendChild(button);
@@ -295,6 +376,11 @@ findStory.addEventListener("click",()=>{
     block:"center"
   });
 });
+
+
+
+
+
 
 
 

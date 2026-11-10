@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>アジアの昔話｜昔話の森</title>
+
+<style>
+:root{
+  --ink:#35483d;
+  --green:#66866c;
+  --light:#f4f5e9;
+  --gold:#c6a568;
+  --paper:#fffdf5;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:"Yu Gothic","Meiryo",sans-serif;
+  color:var(--ink);
+  background:
+    linear-gradient(180deg,#e9f0df,#f8f5e8);
+  min-height:100vh;
+}
+
+header{
+  text-align:center;
+  padding:35px 20px 20px;
+}
+
+header .symbol{
+  font-size:48px;
+}
+
+h1{
+  font-size:30px;
+  margin:10px 0;
+  letter-spacing:0.08em;
+}
+
+.subtitle{
+  font-size:14px;
+  color:#71816d;
+  letter-spacing:0.1em;
+}
+
+main{
+  max-width:850px;
+  margin:0 auto;
+  padding:20px;
+}
+
+.intro{
+  text-align:center;
+  line-height:2;
+  margin-bottom:30px;
+}
+
+.category-list{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(230px,1fr));
+  gap:20px;
+}
+
+.category{
+  display:block;
+  text-decoration:none;
+  color:var(--ink);
+  background:var(--paper);
+  border:1px solid #d9dfce;
+  border-radius:20px;
+  padding:28px 20px;
+  text-align:center;
+  box-shadow:0 5px 12px rgba(53,72,61,0.08);
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s;
+}
+
+.category:hover{
+  transform:translateY(-5px);
+  box-shadow:0 9px 18px rgba(53,72,61,0.15);
+}
+
+.category .icon{
+  font-size:42px;
+  margin-bottom:12px;
+}
+
+.category h2{
+  font-size:20px;
+  margin:8px 0 12px;
+}
+
+.category p{
+  font-size:13px;
+  line-height:1.8;
+  margin:0;
+  color:#71816d;
+}
+
+footer{
+  text-align:center;
+  padding:35px 20px;
+  font-size:13px;
+  color:#71816d;
+}
+
+.back{
+  display:inline-block;
+  margin-top:30px;
+  padding:12px 22px;
+  border-radius:30px;
+  background:#66866c;
+  color:white;
+  text-decoration:none;
+}
+
+.back:hover{
+  background:#4d6d54;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="symbol">🏮</div>
+
+  <h1>アジアの昔話</h1>
+
+  <p class="subtitle">
+    ASIA · 物語の世界をたずねる旅
+  </p>
+</header>
+
+<main>
+
+  <section class="intro">
+    <p>
+      アジアの広い世界には、<br>
+      不思議な物語や、知恵にあふれた物語が<br>
+      たくさん伝えられています。
+    </p>
+
+    <p>
+      どんなお話に出会いたいかな？
+    </p>
+  </section>
+
+  <section class="category-list">
+
+    <!-- 怖い話 -->
+    <a class="category"
+       href="/ohanashiwood/regions/asia/kowai/index.html">
+
+      <div class="icon">👻</div>
+
+      <h2>怖い話</h2>
+
+      <p>
+        鬼や魔物、不思議な出来事。<br>
+        ちょっぴり怖い物語の世界へ。
+      </p>
+
+    </a>
+
+    <!-- おかしな話 -->
+    <a class="category"
+       href="/ohanashiwood/regions/asia/okashina/index.html">
+
+      <div class="icon">🤣</div>
+
+      <h2>おかしな話</h2>
+
+      <p>
+        思わず笑ってしまう、<br>
+        ゆかいで奇妙な物語。
+      </p>
+
+    </a>
+
+    <!-- ちえをはたらかせる話 -->
+    <a class="category"
+       href="/ohanashiwood/regions/asia/chie/index.html">
+
+      <div class="icon">🦊</div>
+
+      <h2>ちえをはたらかせる話</h2>
+
+      <p>
+        知恵を使って困難を乗り越える。<br>
+        頭を使う物語の世界へ。
+      </p>
+
+    </a>
+
+    <!-- ことのおこりの話 -->
+    <a class="category"
+       href="/ohanashiwood/regions/asia/koto-no-okori/index.html">
+
+      <div class="icon">🌏</div>
+
+      <h2>ことのおこりの話</h2>
+
+      <p>
+        どうしてこうなったの？<br>
+        世界や物事の始まりをたずねる物語。
+      </p>
+
+    </a>
+
+  </section>
+
+  <div style="text-align:center;">
+    <a class="back"
+       href="/ohanashiwood/index.html">
+      ← 昔話の森にもどる
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  昔話の森 ― 世界の物語をたずねる旅
+</footer>
+
+</body>
+</html>

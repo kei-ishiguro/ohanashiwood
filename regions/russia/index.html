@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ロシアの昔話 | 昔話の森</title>
+
+<style>
+:root {
+    --ink: #35483d;
+    --green: #66866c;
+    --paper: #fffdf5;
+    --gold: #c6a568;
+    --soft: #edf2e7;
+    --brown: #87684d;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN",
+                 Meiryo, sans-serif;
+    color: var(--ink);
+
+    background:
+        radial-gradient(circle at top, #fffdf5 0%, #edf2e7 55%, #e1e8d9 100%);
+}
+
+/* ページ全体 */
+.container {
+    width: min(1000px, 92%);
+    margin: 0 auto;
+    padding: 45px 0 60px;
+}
+
+/* タイトル */
+header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.ornament {
+    color: var(--gold);
+    font-size: 28px;
+    letter-spacing: 8px;
+}
+
+h1 {
+    font-size: clamp(30px, 5vw, 42px);
+    margin: 12px 0;
+    letter-spacing: 3px;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: var(--brown);
+    line-height: 1.9;
+}
+
+/* 森のイメージ */
+.forest {
+    text-align: center;
+    font-size: 38px;
+    margin: 25px 0;
+    letter-spacing: 8px;
+}
+
+/* 案内 */
+.intro {
+    background: rgba(255, 253, 245, 0.85);
+    border: 1px solid #dce4d5;
+    border-radius: 24px;
+    padding: 25px;
+    text-align: center;
+    line-height: 2;
+    margin-bottom: 35px;
+    box-shadow: 0 5px 18px rgba(53, 72, 61, 0.08);
+}
+
+.intro p {
+    margin: 0;
+}
+
+/* ボタンカード */
+.story-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.story-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 230px;
+    padding: 25px 18px;
+
+    text-decoration: none;
+    color: var(--ink);
+
+    background: var(--paper);
+    border: 2px solid #dce4d5;
+    border-radius: 24px;
+
+    box-shadow: 0 8px 20px rgba(53, 72, 61, 0.10);
+
+    transition: transform 0.25s, box-shadow 0.25s,
+                border-color 0.25s;
+}
+
+.story-card:hover {
+    transform: translateY(-7px);
+    border-color: var(--gold);
+    box-shadow: 0 14px 28px rgba(53, 72, 61, 0.16);
+}
+
+.story-icon {
+    font-size: 52px;
+    margin-bottom: 18px;
+}
+
+.story-card h2 {
+    font-size: 19px;
+    text-align: center;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.story-card p {
+    font-size: 13px;
+    color: var(--brown);
+    text-align: center;
+    line-height: 1.8;
+    margin: 12px 0 0;
+}
+
+/* もどるボタン */
+.back {
+    display: block;
+    width: fit-content;
+    margin: 40px auto 0;
+    padding: 12px 28px;
+
+    background: var(--green);
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+
+    transition: background 0.2s, transform 0.2s;
+}
+
+.back:hover {
+    background: var(--ink);
+    transform: translateY(-2px);
+}
+
+/* スマートフォン */
+@media (max-width: 700px) {
+    .story-list {
+        grid-template-columns: 1fr;
+    }
+
+    .story-card {
+        min-height: 180px;
+    }
+
+    h1 {
+        letter-spacing: 1px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <div class="ornament">✦ ❄ ✦</div>
+
+        <h1>ロシアの昔話</h1>
+
+        <p class="subtitle">
+            深い森の向こうに、ふしぎな物語が待っている。<br>
+            どんなお話に出会えるかな？
+        </p>
+    </header>
+
+    <div class="forest">
+        🌲　🌲　❄　🌲　🌲
+    </div>
+
+    <section class="intro">
+        <p>
+            ロシアの広い大地と深い森。<br>
+            王子さまやお姫さま、ふしぎな魔法、<br>
+            そして動物たちが活躍する昔話の世界へ！
+        </p>
+    </section>
+
+    <section class="story-list">
+
+        <!-- 王子さま・お姫さま -->
+        <a class="story-card" href="princes/index.html">
+            <div class="story-icon">👑</div>
+            <h2>王子さまやお姫さまが<br>出てくる話</h2>
+            <p>
+                お城や魔法の世界。<br>
+                どんな運命が待っているのかな？
+            </p>
+        </a>
+
+        <!-- ドキドキする話 -->
+        <a class="story-card" href="thrilling/index.html">
+            <div class="story-icon">😱</div>
+            <h2>ドキドキする話</h2>
+            <p>
+                深い森の奥へ。<br>
+                ふしぎでちょっぴり怖い物語。
+            </p>
+        </a>
+
+        <!-- 動物たち -->
+        <a class="story-card" href="animals/index.html">
+            <div class="story-icon">🐻</div>
+            <h2>動物たちが<br>でてくるはなし</h2>
+            <p>
+                動物たちはどんな知恵を<br>
+                見せてくれるのかな？
+            </p>
+        </a>
+
+    </section>
+
+    <a class="back" href="../../../ohanashiwood/index.html">
+        ← 昔話の森にもどる
+    </a>
+
+</div>
+
+</body>
+</html>
