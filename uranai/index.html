@@ -39,7 +39,7 @@ h1 {
 }
 
 .forest {
-    font-size: 65px;
+    font-size: 20px;
     margin: 25px 0;
 }
 
@@ -113,6 +113,56 @@ footer {
     font-size: 13px;
     color: #c9d0cb;
 }
+
+
+/* おひめさま占いボタン */
+.princess-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #e8c5df, #c58bbd, #f1d6a5);
+    color: #49334d;
+    text-decoration: none;
+    padding: 17px 38px;
+    border-radius: 50px;
+    font-size: 20px;
+    letter-spacing: 2px;
+    margin: 25px 10px;
+    border: 2px solid #f5d88c;
+    box-shadow: 0 0 15px rgba(245, 216, 140, 0.5);
+    transition: 0.4s;
+}
+
+.princess-button:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 25px rgba(245, 216, 140, 0.9);
+    background: linear-gradient(135deg, #f5d8ed, #d9a5d2, #ffe8b5);
+}
+
+
+
+.princess-catch {
+    color: #f5d88c;
+    font-size: 25px;
+    margin: 30px 0 20px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 12px rgba(245,216,140,0.5);
+}
+
+.princess-description {
+    color: #fff7df;
+    font-size: 17px;
+    line-height: 2.2;
+    margin: 20px auto;
+}
+
+.princess-last {
+    color: #e8c5df;
+    font-size: 17px;
+    margin: 25px 0 35px;
+    letter-spacing: 1px;
+}
+
+
+
 </style>
 </head>
 
@@ -154,7 +204,7 @@ footer {
     </section>
 </div>
 
-    <div class="forest">🌲✨🌲</div>
+    <div class="forest">🌳🌳🌳🌳🌳🌳🌿🌳🌳🌳🌳🌳🌳</div>
 
 
 <script>
@@ -243,10 +293,8 @@ function drawFortune() {
 }
 
 </script>
+<br><br>
 
-</body>
-
-<body>
 
     <div class="container">
         <h1>📜 なまえ占い</h1>
@@ -256,12 +304,18 @@ function drawFortune() {
         <br>
         <button onclick="uranai()">占う！</button>
 
-        <div id="result">
-            <h2 id="chara-name"></h2>
-            <p id="chara-desc"></p>
-            <p><strong>ラッキーアイテム：</strong> <span id="lucky-item"></span></p>
-        </div>
-    </div>
+
+           </div>
+
+<div id="name-result" class="result">
+    <h2 id="chara-name"></h2>
+    <p id="chara-desc"></p>
+    <p>
+        <strong>ラッキーアイテム：</strong>
+        <span id="lucky-item"></span>
+    </p>
+</div>
+
 
     <script>
         // 昔話のキャラクターデータのリスト
@@ -305,8 +359,7 @@ function drawFortune() {
                 alert("名前を入力してください！");
                 return;
             }
-
-            // 名前の文字を数値に変換して、ランダムかつ一貫性のある結果を出すロジック
+document.getElementById("result")            // 名前の文字を数値に変換して、ランダムかつ一貫性のある結果を出すロジック
             let hash = 0;
             for (let i = 0; i < nameInput.length; i++) {
                 hash += nameInput.charCodeAt(i);
@@ -321,12 +374,39 @@ function drawFortune() {
             document.getElementById("chara-desc").innerText = result.desc;
             document.getElementById("lucky-item").innerText = result.item;
 
-            const resultDiv = document.getElementById("result");
+            const resultDiv = document.getElementById("name-result");
             resultDiv.style.display = "block";
         }
     </script>
+    <div class="forest">🌳🌳🌳🌳🌳🌳🌿🌳🌳🌳🌳🌳🌳</div>
+
+
+<br><br>
+        <h1>👑 おひめさま占い</h1>
+
+<h2 class="princess-catch">
+    今日、あなたに出会うお姫様は？
+</h2>
+
+<p class="princess-description">
+    心にとまったカードを一枚選んでね。<br>
+    カードから現れたお姫様が、<br>
+    今日のあなたに素敵なメッセージを届けてくれます。
+</p>
+
+<p class="princess-last">
+    さあ、どんな物語が待っているでしょう。🌹
+</p>
+
+
+
+<a href="princess.html" class="princess-button">
+     おひめさま占いへ ✨
+</a>
 
 <br>
+    <div class="forest">🌳🌳🌳🌳🌳🌳🌿🌳🌳🌳🌳🌳🌳</div>
+
     <a class="forest-link" href="../index.html">
         🎈 昔話の森へ戻る
     </a>
@@ -335,6 +415,9 @@ function drawFortune() {
         昔話の森 ― 世界の物語をたずねる旅
     </footer>
 
+</div>
 
+
+</body>
 
 </html>

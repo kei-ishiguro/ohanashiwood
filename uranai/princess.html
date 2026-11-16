@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>今日のお姫様オラクル 〜昔話のヒロイン占い〜</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Shippori Mincho & Cinzel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Shippori+Mincho:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --midnight: #0d1326;
+            --midnight-light: #1a2442;
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-dark: #997a15;
+            --parchment: #fbf6ea;
+            --parchment-dark: #efe3ca;
+            --ink: #2c221e;
+        }
+
+        body {
+            font-family: 'Shippori Mincho', serif;
+            background: radial-gradient(circle at top center, var(--midnight-light) 0%, var(--midnight) 65%, #070a14 100%);
+            color: var(--parchment);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* 背景の星空パーティクル */
+        .stars-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(1px 1px at 15% 25%, rgba(243, 229, 171, 0.65) 50%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 75% 15%, rgba(212, 175, 55, 0.55) 50%, transparent 100%),
+                radial-gradient(1px 1px at 45% 65%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
+                radial-gradient(2px 2px at 85% 75%, rgba(243, 229, 171, 0.5) 50%, transparent 100%),
+                radial-gradient(1px 1px at 25% 85%, rgba(212, 175, 55, 0.6) 50%, transparent 100%);
+            background-size: 320px 320px;
+            z-index: 0;
+        }
+
+        /* アンティークゴールドの枠線装飾 */
+        .gold-border {
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15), inset 0 0 10px rgba(212, 175, 55, 0.1);
+        }
+
+        .parchment-card {
+            background: linear-gradient(145deg, var(--parchment) 0%, var(--parchment-dark) 100%);
+            color: var(--ink);
+            border: 2px solid var(--gold);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), inset 0 0 24px rgba(184, 148, 70, 0.25);
+        }
+
+        /* 3Dカードフリップ用スタイル */
+        .perspective-container {
+            perspective: 1100px;
+        }
+
+        .oracle-card-wrapper {
+            aspect-ratio: 3 / 4.1;
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+            cursor: pointer;
+        }
+
+        .oracle-card-wrapper:hover {
+            transform: translateY(-4px) scale(1.04);
+        }
+
+        .oracle-card-wrapper:active {
+            transform: scale(0.95);
+        }
+
+        .oracle-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.75s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .oracle-card-wrapper.is-flipped .oracle-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.6rem;
+            overflow: hidden;
+        }
+
+        /* カード裏面デザイン */
+        .card-back {
+            background: linear-gradient(135deg, #1a1333 0%, #2c1328 50%, #101730 100%);
+            border: 1.5px solid var(--gold);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .card-back-inner {
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            border-radius: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* カード表面（フリップ瞬間用ミニ表示） */
+        .card-front-mini {
+            background: var(--parchment);
+            color: var(--ink);
+            border: 1.5px solid var(--gold);
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            text-align: center;
+        }
+
+        /* シャッフルアニメーション */
+        @keyframes shufflePulse {
+            0% { transform: scale(1) rotate(0deg); }
+            30% { transform: scale(0.86) rotate(-5deg); opacity: 0.7; }
+            60% { transform: scale(0.86) rotate(5deg); opacity: 0.7; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .shuffling .oracle-card-wrapper {
+            animation: shufflePulse 0.6s ease-in-out;
+        }
+
+        /* モーダルフェードイン */
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(14px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .animate-modal {
+            animation: modalAppear 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* カード出現時のキラキラパーティクル */
+        @keyframes sparkleBurst {
+            0% { transform: translate(0, 0) scale(0); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.2); opacity: 0; }
+        }
+
+        .sparkle-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fffbeb 20%, #d4af37 80%);
+            pointer-events: none;
+            animation: sparkleBurst 0.85s ease-out forwards;
+        }
+
+        /* カスタムスクロールバー */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(13, 19, 38, 0.8);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.45);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-amber-700 selection:text-white">
+    <div class="stars-bg"></div>
+
+    <!-- メインコンテナ -->
+    <div class="relative z-10 max-w-md mx-auto px-3.5 py-4 sm:py-6 min-h-screen flex flex-col justify-between">
+        
+        <!-- ヘッダー（サウンド切り替え付き） -->
+        <header class="relative text-center mb-3">
+            <!-- サウンドON/OFFボタン -->
+            <button id="sound-toggle-btn" type="button" aria-label="効果音の切り替え"
+                class="absolute right-0 top-0 p-2 rounded-full bg-slate-900/75 border border-amber-400/40 text-amber-300 hover:bg-slate-800 transition active:scale-95"
+                title="効果音 ON/OFF">
+                <!-- ONアイコン -->
+                <svg id="sound-icon-on" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                </svg>
+                <!-- OFFアイコン -->
+                <svg id="sound-icon-off" class="w-4 h-4 hidden text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                </svg>
+            </button>
+
+            <div class="inline-flex items-center gap-1.5 text-[10px] sm:text-xs tracking-widest text-amber-300/80 font-cinzel mb-0.5">
+                <span>✦</span>
+                <span>FAIRY TALE PRINCESS ORACLE</span>
+                <span>✦</span>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-300 drop-shadow">
+                今日のお姫様オラクル
+            </h1>
+            <p class="text-[11px] sm:text-xs text-amber-100/75 mt-0.5 tracking-wide">
+                〜 16人の昔話のヒロインが贈る今日の導き 〜
+            </p>
+        </header>
+
+        <!-- メインコンテンツ（カード選択画面） -->
+        <main id="selection-view" class="flex-grow flex flex-col justify-center">
+            <!-- 案内メッセージ -->
+            <div class="text-center bg-slate-900/65 backdrop-blur-sm gold-border rounded-xl py-2 px-3 mb-3.5">
+                <p id="instruction-text" class="text-xs sm:text-sm text-amber-50 leading-relaxed">
+                    心を落ち着けて、<span class="text-amber-300 font-semibold">気になるカードを1枚</span>選んでください
+                </p>
+            </div>
+
+            <!-- 16枚のカードグリッド（4列×4行でスマホ一画面にスッキリ収まる配置） -->
+            <div id="cards-grid" class="grid grid-cols-4 gap-2 sm:gap-2.5 perspective-container mb-4 px-1">
+                <!-- JavaScriptで16枚のカードを生成 -->
+            </div>
+
+            <!-- アクションボタン群 -->
+            <div class="grid grid-cols-2 gap-2.5 mt-1">
+                <button id="shuffle-btn" type="button"
+                    class="flex items-center justify-center gap-1.5 px-3 py-3 rounded-full bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-500 text-amber-50 font-semibold text-xs sm:text-sm tracking-wide shadow-lg shadow-amber-950/60 border border-amber-300/50 transition active:scale-95">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>シャッフルする</span>
+                </button>
+
+                <button id="open-grimoire-btn" type="button"
+                    class="flex items-center justify-center gap-1.5 px-3 py-3 rounded-full bg-slate-900/85 hover:bg-slate-800 text-amber-200 font-semibold text-xs sm:text-sm tracking-wide gold-border transition active:scale-95">
+                    <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <span>お姫様図鑑</span>
+                    <span id="collection-badge" class="text-[11px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded-full border border-amber-400/30">0/16</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- フッター -->
+        <footer class="text-center text-[10px] text-amber-200/40 pt-3 pb-1">
+            <p>昔話のお姫様オラクルカード — 全16柱の物語</p>
+        </footer>
+    </div>
+
+    <!-- 結果表示モーダル（オラクルカード詳細） -->
+    <div id="result-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md overflow-y-auto p-3 sm:p-5 flex items-start sm:items-center justify-center">
+        <div id="result-card-container" class="parchment-card w-full max-w-md rounded-2xl p-5 sm:p-6 relative my-auto animate-modal">
+            <!-- 四隅の装飾 -->
+            <div class="absolute top-2.5 left-2.5 w-4 h-4 border-t-2 border-l-2 border-amber-600/60 rounded-tl"></div>
+            <div class="absolute top-2.5 right-2.5 w-4 h-4 border-t-2 border-r-2 border-amber-600/60 rounded-tr"></div>
+            <div class="absolute bottom-2.5 left-2.5 w-4 h-4 border-b-2 border-l-2 border-amber-600/60 rounded-bl"></div>
+            <div class="absolute bottom-2.5 right-2.5 w-4 h-4 border-b-2 border-r-2 border-amber-600/60 rounded-br"></div>
+
+            <!-- カード上部：番号と出典 -->
+            <div class="text-center border-b border-amber-800/20 pb-2.5 mb-3.5">
+                <span id="res-roman" class="font-cinzel text-sm font-bold tracking-widest text-amber-800 block">I</span>
+                <h2 id="res-name" class="text-lg sm:text-xl font-bold text-stone-900 mt-0.5 leading-snug">シンデレラ</h2>
+                <p id="res-origin" class="text-xs text-amber-900/80 mt-0.5 font-medium">出典：グリム童話</p>
+            </div>
+
+            <!-- 象徴SVGイラストフレーム（キラキラパーティクル発生源） -->
+            <div id="artwork-wrapper" class="relative w-32 h-32 sm:w-36 sm:h-36 mx-auto mb-3.5 rounded-full bg-gradient-to-b from-amber-100/90 to-amber-200/50 border-2 border-amber-600/50 shadow-inner flex items-center justify-center p-2.5">
+                <div id="res-artwork" class="w-full h-full flex items-center justify-center">
+                    <!-- カスタムSVG挿入 -->
+                </div>
+            </div>
+
+            <!-- 3つのキーワードバッジ -->
+            <div id="res-keywords" class="flex flex-wrap justify-center gap-1.5 mb-3.5">
+                <!-- バッジ挿入 -->
+            </div>
+
+            <!-- カードのメッセージ（引用枠） -->
+            <blockquote class="bg-amber-900/10 border-l-4 border-amber-700 rounded-r-lg p-3 mb-3.5">
+                <p id="res-message" class="text-sm sm:text-base font-bold text-amber-950 leading-relaxed">
+                    メッセージ
+                </p>
+            </blockquote>
+
+            <!-- 今日の指針 -->
+            <div class="mb-3.5">
+                <h3 class="text-xs font-bold tracking-wider text-amber-900 uppercase mb-1 flex items-center gap-1.5">
+                    <span>✦</span> 今日の指針
+                </h3>
+                <p id="res-guidance" class="text-xs sm:text-sm text-stone-800 leading-relaxed text-justify">
+                    指針テキスト
+                </p>
+            </div>
+
+            <!-- ラッキーアイテム＆アクション -->
+            <div class="bg-white/65 border border-amber-700/25 rounded-xl p-3 mb-4 space-y-1.5 text-xs">
+                <div class="flex items-start gap-1.5">
+                    <span class="font-bold text-amber-900 shrink-0">◈ ラッキーアイテム：</span>
+                    <span id="res-item" class="text-stone-800">アイテム</span>
+                </div>
+                <div class="flex items-start gap-1.5">
+                    <span class="font-bold text-amber-900 shrink-0">◈ 開運アクション：</span>
+                    <span id="res-action" class="text-stone-800">アクション</span>
+                </div>
+            </div>
+
+            <!-- アクションボタン群 -->
+            <div class="flex flex-col gap-2">
+                <button id="share-result-btn" type="button"
+                    class="w-full py-2.5 px-4 rounded-xl bg-amber-700 hover:bg-amber-600 text-white font-semibold text-xs sm:text-sm tracking-wider shadow transition active:scale-98 flex items-center justify-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                    <span>このお姫様をSNS用にコピー / 共有</span>
+                </button>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="draw-again-btn" type="button"
+                        class="py-2.5 px-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-200 font-semibold text-xs tracking-wider shadow transition active:scale-98">
+                        もう一度引く
+                    </button>
+                    <button id="modal-to-grimoire-btn" type="button"
+                        class="py-2.5 px-3 rounded-xl bg-amber-800/15 hover:bg-amber-800/25 text-amber-950 font-semibold text-xs tracking-wider border border-amber-800/30 transition">
+                        お姫様図鑑を見る
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- お姫様図鑑モーダル（全16枚コレクション） -->
+    <div id="grimoire-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md overflow-y-auto p-3 sm:p-5">
+        <div class="max-w-lg mx-auto bg-slate-900/95 gold-border rounded-2xl p-4 sm:p-6 my-3 animate-modal">
+            <div class="flex items-center justify-between border-b border-amber-500/30 pb-3 mb-3.5">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-amber-200 flex items-center gap-2">
+                        <span>📖</span> お姫様オラクル図鑑（全16枚）
+                    </h2>
+                    <p class="text-[11px] text-amber-100/70 mt-0.5">タップすると各お姫様の詳しい導きを読めます</p>
+                </div>
+                <button id="close-grimoire-btn" type="button" aria-label="閉じる" class="p-2 text-amber-300 hover:text-white rounded-lg bg-slate-800/80 border border-amber-500/30">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 発見状況バー＆フィルター -->
+            <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-950/75 rounded-lg px-3 py-2 mb-3.5 border border-amber-500/20 text-xs">
+                <span class="text-amber-100/85">出会ったお姫様：<strong id="grimoire-count" class="text-amber-300 text-sm">0</strong> / 16 人</span>
+                <div class="flex items-center gap-3">
+                    <select id="origin-filter" class="bg-slate-800 text-amber-200 border border-amber-500/30 rounded px-2 py-1 text-[11px] focus:outline-none">
+                        <option value="all">すべて表示 (16)</option>
+                        <option value="world">世界の昔話 (11)</option>
+                        <option value="japan">日本の昔話・神話 (5)</option>
+                    </select>
+                    <button id="reset-history-btn" type="button" class="text-amber-400/70 hover:text-amber-300 underline text-[11px]">
+                        記録リセット
+                    </button>
+                </div>
+            </div>
+
+            <!-- 図鑑リスト -->
+            <div id="grimoire-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4 max-h-[60vh] overflow-y-auto pr-1">
+                <!-- JavaScriptで全16枚を生成 -->
+            </div>
+
+            <button id="close-grimoire-bottom-btn" type="button"
+                class="w-full py-2.5 rounded-xl bg-amber-700/85 hover:bg-amber-600 text-white font-semibold text-xs sm:text-sm tracking-wider transition">
+                カード選択に戻る
+            </button>
+        </div>
+    </div>
+
+    <!-- コピー用の非表示テキストエリア -->
+    <textarea id="clipboard-helper" class="sr-only" aria-hidden="true"></textarea>
+
+    <!-- カスタム通知トースト（alert()の代替） -->
+    <div id="toast-msg" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] hidden bg-slate-950/95 text-amber-200 border border-amber-400/60 px-5 py-2.5 rounded-full shadow-2xl text-xs sm:text-sm tracking-wide whitespace-nowrap">
+    </div>
+
+    <script>
+        /**
+         * 全16枚のお姫様オラクルカードデータ
+         * I〜VIII: 前回の8人
+         * IX〜XVI: 最初の7人 + やがみひめ（八上比売）
+         */
+        const PRINCESS_CARDS = [
+            {
+                id: "cinderella",
+                roman: "I",
+                name: "シンデレラ（灰かぶり）",
+                shortName: "シンデレラ",
+                origin: "グリム童話",
+                region: "world",
+                keywords: ["変容", "準備の完了", "魔法の時間"],
+                message: "「灰にまみれた日々の努力が、今こそ美しいドレスへと姿を変える時です。」",
+                guidance: "これまで地道に積み重ねてきたことや、人知れず耐えてきたことが報われる兆しがあります。今日は自分の魅力や実力を隠さず、堂々と表舞台へ出てみましょう。ただし、時間や約束事の「区切り（12時の鐘）」はしっかり意識して動くと吉です。",
+                luckyItem: "ガラスの靴（お気に入りの靴）、時計",
+                luckyAction: "お気に入りの靴を綺麗に磨き、背筋を伸ばして出かける",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <defs>
+                        <linearGradient id="gold1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#f3e5ab"/><stop offset="50%" stop-color="#d4af37"/><stop offset="100%" stop-color="#8a6d14"/>
+                        </linearGradient>
+                        <linearGradient id="glass1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.95"/><stop offset="100%" stop-color="#7dd3fc" stop-opacity="0.65"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M25 25 L27 31 L33 33 L27 35 L25 41 L23 35 L17 33 L23 31 Z" fill="url(#gold1)"/>
+                    <path d="M92 20 L94 25 L99 27 L94 29 L92 34 L90 29 L85 27 L90 25 Z" fill="url(#gold1)"/>
+                    <path d="M35 45 Q60 22 85 45 L80 50 Q60 36 40 50 Z" fill="url(#gold1)" stroke="#785a0d" stroke-width="1"/>
+                    <circle cx="60" cy="28" r="2.8" fill="#fff"/>
+                    <path d="M28 88 L42 88 L44 74 C52 78 65 86 88 86 C94 86 96 81 92 78 C84 74 72 72 60 63 C54 58 46 62 42 70 L32 70 L28 88 Z" fill="url(#glass1)" stroke="#0284c7" stroke-width="1.5"/>
+                    <path d="M62 72 L66 76 L62 80 L58 76 Z" fill="url(#gold1)"/>
+                </svg>`
+            },
+            {
+                id: "thrushbeard",
+                roman: "II",
+                name: "ツグミ髭の王さまのお姫さま",
+                shortName: "ツグミ髭の王さまの姫",
+                origin: "グリム童話",
+                region: "world",
+                keywords: ["プライドの手放し", "等身大の学び", "真実の愛"],
+                message: "「高い城壁から降りて、自分の手で土に触れることで、本当の豊かさを知るでしょう。」",
+                guidance: "見栄や「こうあるべき」という高いプライドが、かえってあなたを窮屈にしていませんか？ 今日は肩の力を抜き、失敗や不器用さも笑い飛ばしてみましょう。素直になって誰かの懐に飛び込むことで、想像以上の優しさと豊かさが返ってきます。",
+                luckyItem: "素焼きの器、温かいスープ",
+                luckyAction: "見栄を張らずに「ありがとう」「助けて」と素直に口にする",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <path d="M40 42 L44 26 L53 35 L60 22 L67 35 L76 26 L80 42 Z" fill="#d4af37" stroke="#785a0d" stroke-width="1.2"/>
+                    <rect x="40" y="42" width="40" height="5" rx="2" fill="#f3e5ab" stroke="#785a0d" stroke-width="1"/>
+                    <path d="M35 78 C35 64 52 58 66 64 C74 67 80 62 86 60 C83 68 80 74 74 78 C66 84 48 86 35 78 Z" fill="#854d0e" stroke="#451a03" stroke-width="1.2"/>
+                    <path d="M45 76 C52 72 62 72 68 76" stroke="#fde68a" stroke-width="1.5" fill="none" stroke-dasharray="2 2"/>
+                    <circle cx="44" cy="68" r="2" fill="#fff"/>
+                    <path d="M35 71 L27 73 L35 75 Z" fill="#d97706"/>
+                    <path d="M44 92 L76 92 L71 102 L49 102 Z" fill="#b45309" stroke="#78350f" stroke-width="1.2"/>
+                </svg>`
+            },
+            {
+                id: "goosegirl",
+                roman: "III",
+                name: "ガチョウ番の娘（ファラダとのお姫さま）",
+                shortName: "ガチョウ番の娘",
+                origin: "グリム童話",
+                region: "world",
+                keywords: ["本来の尊厳", "沈黙の誠実さ", "真実の露見"],
+                message: "「たとえ今は立場を奪われていても、あなたの気高さまで奪うことは誰にもできません。」",
+                guidance: "理不尽な状況や誤解の中で、悔しい思いをしているかもしれません。しかし、無理に言い争う必要はありません。あなたは自分の誠実さを貫き、心の奥の「真実（かまどへの告白）」を大切にしてください。見ている人は必ず見ており、やがて正当な評価が戻ってきます。",
+                luckyItem: "金の櫛、白いハンカチ",
+                luckyAction: "静かな場所で自分の本音を紙に書き出し、心を整える",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <circle cx="60" cy="42" r="16" fill="#fde047" stroke="#b45309" stroke-width="1.2"/>
+                    <g stroke="#d97706" stroke-width="2" stroke-linecap="round">
+                        <line x1="60" y1="16" x2="60" y2="22"/><line x1="60" y1="62" x2="60" y2="68"/>
+                        <line x1="34" y1="42" x2="40" y2="42"/><line x1="80" y1="42" x2="86" y2="42"/>
+                        <line x1="42" y1="24" x2="46" y2="28"/><line x1="74" y1="56" x2="78" y2="60"/>
+                        <line x1="78" y1="24" x2="74" y2="28"/><line x1="46" y1="56" x2="42" y2="60"/>
+                    </g>
+                    <path d="M30 92 Q60 66 90 74 Q76 92 42 94 Z" fill="#fffbeb" stroke="#d4af37" stroke-width="1.5"/>
+                    <path d="M25 96 Q60 76 90 74" stroke="#b45309" stroke-width="1.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: "lark",
+                roman: "IV",
+                name: "鳴いてはねるひばりのお姫さま",
+                shortName: "鳴いてはねるひばりの姫",
+                origin: "グリム童話",
+                region: "world",
+                keywords: ["粘り強い愛", "長い旅路", "約束の成就"],
+                message: "「太陽や月、風の力さえも味方につけて、あなたは大切なものを取り戻せます。」",
+                guidance: "遠く離れた目標や、時間がかかりそうな課題に向き合う日です。一足飛びにはいかなくても、一歩ずつ歩き続ければ、必ず道中で助け手（知恵やアイテム）が現れます。諦めない一途さと、ここぞという時の機転が奇跡を引き寄せます。",
+                luckyItem: "木の実（くるみやアーモンド）、小鳥のモチーフ",
+                luckyAction: "目標に向かって小さな一歩（5分だけの作業など）を踏み出す",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <circle cx="32" cy="34" r="10" fill="#fbbf24" stroke="#b45309" stroke-width="1"/>
+                    <path d="M86 24 A12 12 0 1 0 96 40 A9 9 0 1 1 86 24 Z" fill="#fef08a" stroke="#b45309" stroke-width="1"/>
+                    <path d="M60 16 L62 22 L68 24 L62 26 L60 32 L58 26 L52 24 L58 22 Z" fill="#d4af37"/>
+                    <path d="M34 74 Q52 54 64 68 Q78 50 92 64 Q76 74 68 82 Q52 90 34 74 Z" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/>
+                    <path d="M52 72 Q60 66 68 72" stroke="#92400e" stroke-width="1.2" fill="none"/>
+                    <path d="M26 94 Q60 88 94 94" stroke="#0284c7" stroke-width="1.2" fill="none" stroke-dasharray="4 3"/>
+                </svg>`
+            },
+            {
+                id: "catskin",
+                roman: "V",
+                name: "ねこの皮を着た娘",
+                shortName: "ねこの皮を着た娘",
+                origin: "グリム童話・ヨーロッパ民話",
+                region: "world",
+                keywords: ["戦略的カモフラージュ", "しなやかな知恵", "自立"],
+                message: "「今はあえて地味な毛皮をまとい、自分の輝きを安全な場所に隠しておきましょう。」",
+                guidance: "周囲の目やプレッシャーから身を守るために、あえて目立たないふりをしたり、一歩引いたりすることが最善の策となる日です。しかし、あなたの内面には太陽や星のように輝くドレスがしっかりしまわれています。タイミングが来るまで、しなやかに力を温存してください。",
+                luckyItem: "金の指輪、ストールや羽織りもの",
+                luckyAction: "控えめな装いの中に、自分だけが知るお気に入りの小物を忍ばせる",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <path d="M82 22 A14 14 0 1 0 95 42 A11 11 0 1 1 82 22 Z" fill="#d4af37"/>
+                    <circle cx="32" cy="30" r="2" fill="#d4af37"/><circle cx="44" cy="22" r="1.5" fill="#d4af37"/>
+                    <path d="M44 46 L48 34 L56 42 Q62 40 68 42 L76 34 L80 46 Q84 54 78 62 Q82 76 78 92 L46 92 Q42 76 46 62 Q40 54 44 46 Z" fill="#292524" stroke="#d4af37" stroke-width="1.2"/>
+                    <ellipse cx="55" cy="51" rx="2" ry="3" fill="#fde047"/><ellipse cx="69" cy="51" rx="2" ry="3" fill="#fde047"/>
+                    <circle cx="62" cy="72" r="5" fill="none" stroke="#facc15" stroke-width="2"/>
+                </svg>`
+            },
+            {
+                id: "urikohime",
+                roman: "VI",
+                name: "うりこひめ（瓜子姫）",
+                shortName: "うりこひめ",
+                origin: "日本の昔話",
+                region: "japan",
+                keywords: ["繊細な手仕事", "誘惑への警戒", "心の戸締まり"],
+                message: "「機（はた）を織る静かな集中力を守り、甘い言葉で戸を叩くものに気をつけて。」",
+                guidance: "あなたの才能や優しさに惹かれて、さまざまな人が近づいてくる日です。しかし、何でも受け入れてしまうとペースを乱されてしまいます。「今日はここまで」と自分のテリトリーの戸締まりをしっかり行い、自分が本当に集中したいクリエイティブな作業に没頭しましょう。",
+                luckyItem: "織物・ハンカチ、季節の果物",
+                luckyAction: "スマホの通知をオフにして、1時間だけ自分の作業や趣味に没頭する",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <g stroke="#d4af37" stroke-width="0.8" opacity="0.5">
+                        <line x1="25" y1="30" x2="95" y2="30"/><line x1="25" y1="90" x2="95" y2="90"/>
+                        <line x1="30" y1="25" x2="30" y2="95"/><line x1="90" y1="25" x2="90" y2="95"/>
+                    </g>
+                    <ellipse cx="54" cy="62" rx="20" ry="27" fill="#65a30d" stroke="#365314" stroke-width="1.5"/>
+                    <path d="M54 35 Q46 62 54 89" stroke="#bef264" stroke-width="1.5" fill="none"/>
+                    <path d="M54 35 Q62 62 54 89" stroke="#bef264" stroke-width="1.5" fill="none"/>
+                    <path d="M54 35 Q54 27 60 25" stroke="#365314" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <circle cx="78" cy="74" r="12" fill="#e11d48" stroke="#881337" stroke-width="1"/>
+                    <circle cx="78" cy="74" r="4" fill="#facc15"/>
+                </svg>`
+            },
+            {
+                id: "kate",
+                roman: "VII",
+                name: "ケイト（『くるみ割りのケイト』）",
+                shortName: "ケイト",
+                origin: "イギリスの昔話",
+                region: "world",
+                keywords: ["行動力", "機転", "姉妹（仲間）への献身"],
+                message: "「恐れることはありません。木の実を割る音とともに、夜の世界の秘密を解き明かしましょう。」",
+                guidance: "問題解決の鍵は、あなたの「観察眼」と「行動力」にあります。状況を冷静に見極め、必要な道具（くるみや小枝）を手に入れて果敢に動くことで、自分だけでなく大切な人のピンチも救うことができます。今日は迷わず行動に移す日です。",
+                luckyItem: "くるみ（ナッツ類）、鍵のモチーフ",
+                luckyAction: "後回しにしていた連絡やタスクを、今日一番に片付ける",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <circle cx="60" cy="40" r="18" fill="#fef08a" opacity="0.5"/>
+                    <rect x="52" y="30" width="16" height="20" rx="2" fill="#f59e0b" stroke="#78350f" stroke-width="1.5"/>
+                    <path d="M49 30 L60 22 L71 30 Z" fill="#78350f"/>
+                    <ellipse cx="46" cy="78" rx="14" ry="17" fill="#92400e" stroke="#451a03" stroke-width="1.5"/>
+                    <path d="M46 61 L46 95" stroke="#451a03" stroke-width="1.5"/>
+                    <circle cx="78" cy="66" r="7" fill="none" stroke="#d4af37" stroke-width="2.5"/>
+                    <line x1="78" y1="73" x2="78" y2="96" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="78" y1="88" x2="85" y2="88" stroke="#d4af37" stroke-width="2.5"/>
+                    <line x1="78" y1="94" x2="84" y2="94" stroke="#d4af37" stroke-width="2.5"/>
+                </svg>`
+            },
+            {
+                id: "anne",
+                roman: "VIII",
+                name: "アン（『くるみ割りのケイト』）",
+                shortName: "アン",
+                origin: "イギリスの昔話",
+                region: "world",
+                keywords: ["受容", "癒やし", "無垢な存在感"],
+                message: "「あなたはただそこにいて、笑顔でいるだけで周りの人の心を救う存在です。」",
+                guidance: "無理に何かを成し遂げようとしたり、戦ったりする必要はありません。傷ついた心や疲れた体をゆっくり休ませ、信頼できる人のサポートを素直に受け取りましょう。あなたが健やかに笑うことが、周囲にとって一番の喜びであり、幸運の証です。",
+                luckyItem: "ハーブティー、柔らかいクッション",
+                luckyAction: "温かい飲み物をゆっくり味わい、自分を労わる時間をつくる",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <circle cx="60" cy="60" r="36" fill="#fef3c7" opacity="0.7"/>
+                    <circle cx="60" cy="60" r="24" fill="none" stroke="#4d7c0f" stroke-width="2.5"/>
+                    <g>
+                        <circle cx="60" cy="36" r="5" fill="#fbcfe8" stroke="#be185d" stroke-width="1"/><circle cx="60" cy="36" r="1.5" fill="#facc15"/>
+                        <circle cx="81" cy="48" r="5" fill="#fde68a" stroke="#b45309" stroke-width="1"/><circle cx="81" cy="48" r="1.5" fill="#fff"/>
+                        <circle cx="81" cy="72" r="5" fill="#fbcfe8" stroke="#be185d" stroke-width="1"/><circle cx="81" cy="72" r="1.5" fill="#facc15"/>
+                        <circle cx="60" cy="84" r="5" fill="#e0e7ff" stroke="#4338ca" stroke-width="1"/><circle cx="60" cy="84" r="1.5" fill="#facc15"/>
+                        <circle cx="39" cy="72" r="5" fill="#fde68a" stroke="#b45309" stroke-width="1"/><circle cx="39" cy="72" r="1.5" fill="#fff"/>
+                        <circle cx="39" cy="48" r="5" fill="#e0e7ff" stroke="#4338ca" stroke-width="1"/><circle cx="39" cy="48" r="1.5" fill="#facc15"/>
+                    </g>
+                </svg>`
+            },
+            {
+                id: "kaguyahime",
+                roman: "IX",
+                name: "かぐや姫",
+                shortName: "かぐや姫",
+                origin: "竹取物語（日本）",
+                keywords: ["凛とした自立", "高い視点", "境界線"],
+                message: "「誰の思い通りにもならない凛とした光が、あなた本来の居場所を照らしています。」",
+                guidance: "周囲の期待や世間の常識に合わせようとして、心が疲れていませんか？ 今日は自分の心の領域（境界線）をしっかりと守り、他人の基準ではなく「自分が本当に美しいと思うもの」を選んでください。高い視点から物事を俯瞰することで、迷いが晴れていきます。",
+                luckyItem: "月モチーフのアクセサリー、日本茶",
+                luckyAction: "夜空の月や星を見上げて深呼吸し、自分だけの静かな時間を持つ",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <circle cx="60" cy="46" r="24" fill="#fef08a" stroke="#d4af37" stroke-width="1.5"/>
+                    <g fill="#4d7c0f" stroke="#1a2e05" stroke-width="1.2">
+                        <rect x="34" y="45" width="7" height="52" rx="1"/>
+                        <rect x="79" y="50" width="7" height="47" rx="1"/>
+                        <line x1="34" y1="62" x2="41" y2="62" stroke="#bef264" stroke-width="1.5"/>
+                        <line x1="34" y1="80" x2="41" y2="80" stroke="#bef264" stroke-width="1.5"/>
+                        <line x1="79" y1="68" x2="86" y2="68" stroke="#bef264" stroke-width="1.5"/>
+                        <path d="M41 62 Q52 56 54 63 Q46 66 41 62 Z"/>
+                        <path d="M79 68 Q68 62 66 69 Q74 72 79 68 Z"/>
+                    </g>
+                </svg>`
+            },
+            {
+                id: "tsuu",
+                roman: "X",
+                name: "鶴の恩返しの「つう」",
+                shortName: "鶴の恩返しのつう",
+                origin: "日本の昔話",
+                keywords: ["献身", "集中力", "秘密の聖域"],
+                message: "「大切な誰かのために織り上げる美しい布は、あなただけの聖域でこそ完成します。」",
+                guidance: "誰かのために力を尽くしたいという純粋な優しさが溢れる日です。ただし、自分をすり減らしすぎないよう「ここからは一人にしてほしい」という自分のルールを相手にしっかり伝えることも大切です。集中力を研ぎ澄ませれば、素晴らしい成果が生まれます。",
+                luckyItem: "白い羽根のモチーフ、上質なストール",
+                luckyAction: "「ここから30分は自分の時間」と決めて、誰にも邪魔されない空間をつくる",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <circle cx="60" cy="60" r="30" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4 3"/>
+                    <path d="M35 85 Q58 55 86 35 Q76 62 52 82 Z" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+                    <path d="M30 90 L86 35" stroke="#d4af37" stroke-width="1.8" stroke-linecap="round"/>
+                    <circle cx="72" cy="74" r="5" fill="#dc2626"/>
+                </svg>`
+            },
+            {
+                id: "hachikazuki",
+                roman: "XI",
+                name: "鉢かづき姫",
+                shortName: "鉢かづき姫",
+                origin: "御伽草子（日本）",
+                keywords: ["忍耐", "内なる輝き", "時が満ちる"],
+                message: "「重たい鉢の下に守られてきたあなたの知性と輝きが、まもなく世に現れる時が来ます。」",
+                guidance: "今はまだ地味な役割や我慢が必要な場面にいるかもしれませんが、腐らず誠実に目の前のことをこなしているあなたの姿を、運命はちゃんと見ています。焦らなくても、やがて重たい鉢が割れて、内側に秘めていた宝物が一斉に輝き出す瞬間が訪れます。",
+                luckyItem: "お気に入りの茶碗・ボウル、真珠や宝石の小物",
+                luckyAction: "地味に思える作業や掃除を、丁寧な気持ちでひとつ片付ける",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <path d="M30 56 C30 34 90 34 90 56 Z" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
+                    <path d="M26 56 L94 56" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/>
+                    <polygon points="60,66 72,78 60,92 48,78" fill="#38bdf8" stroke="#0284c7" stroke-width="1.5"/>
+                    <polygon points="60,70 67,78 60,87 53,78" fill="#e0f2fe"/>
+                    <line x1="60" y1="60" x2="60" y2="63" stroke="#d4af37" stroke-width="2"/>
+                    <line x1="42" y1="72" x2="45" y2="74" stroke="#d4af37" stroke-width="2"/>
+                    <line x1="78" y1="72" x2="75" y2="74" stroke="#d4af37" stroke-width="2"/>
+                </svg>`
+            },
+            {
+                id: "snowwhite",
+                roman: "XII",
+                name: "白雪姫",
+                shortName: "白雪姫",
+                origin: "グリム童話",
+                region: "world",
+                keywords: ["無垢", "調和", "再生"],
+                message: "「毒のある言葉からは距離を置き、安心できる森の仲間たちと心を休めましょう。」",
+                guidance: "誰かの嫉妬や不機嫌さに巻き込まれそうになったら、真正面から受け止めず、そっとその場を離れてください。気心の知れた仲間や自然の中で美味しいものを食べ、ぐっすり眠ることで、あなたの純粋なエネルギーは何度でも美しく再生します。",
+                luckyItem: "赤いりんご、手鏡",
+                luckyAction: "鏡を見て自分に優しく微笑みかけ、美味しい果物やおやつを味わう",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <ellipse cx="60" cy="56" rx="26" ry="34" fill="#e0f2fe" stroke="#d4af37" stroke-width="3"/>
+                    <path d="M60 44 C50 44 45 54 47 65 C49 74 56 78 60 76 C64 78 71 74 73 65 C75 54 70 44 60 44 Z" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.2"/>
+                    <path d="M60 44 Q62 37 66 36" stroke="#451a03" stroke-width="2" fill="none"/>
+                    <path d="M60 41 Q67 36 70 41 Q65 44 60 41 Z" fill="#65a30d"/>
+                </svg>`
+            },
+            {
+                id: "briarrose",
+                roman: "XIII",
+                name: "いばら姫（眠れる森の美女）",
+                shortName: "いばら姫",
+                origin: "グリム童話・ペロー童話",
+                region: "world",
+                keywords: ["休息", "受容", "タイミング待ち"],
+                message: "「いばらの垣根があなたを守っています。今は無理に動かず、静かな眠りと休息を。」",
+                guidance: "物事が思うように進まないと感じるなら、今は「動くべき時ではない」というサインです。いばらの垣根が外敵から城を守ってくれるように、あなたも今は心と体を休め、エネルギーを充電してください。時が満ちれば、扉は自然と開かれます。",
+                luckyItem: "薔薇の香り（アロマ・ハンドクリーム）、柔らかい寝具",
+                luckyAction: "いつもより30分早く布団に入り、質の良い睡眠をとる",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <circle cx="60" cy="60" r="32" fill="none" stroke="#166534" stroke-width="2" stroke-dasharray="6 4"/>
+                    <circle cx="60" cy="60" r="18" fill="#e11d48" stroke="#881337" stroke-width="1.5"/>
+                    <path d="M52 60 Q60 50 68 60 Q60 70 52 60 Z" fill="#fda4af"/>
+                    <circle cx="60" cy="60" r="5" fill="#9f1239"/>
+                    <path d="M36 42 L42 46 M84 42 L78 46 M36 78 L42 74 M84 78 L78 74" stroke="#166534" stroke-width="2" stroke-linecap="round"/>
+                </svg>`
+            },
+            {
+                id: "frogprincess",
+                roman: "XIV",
+                name: "蛙の王さまのお姫さま",
+                shortName: "蛙の王さまの姫",
+                origin: "グリム童話",
+                region: "world",
+                keywords: ["自己主張", "感情の解放", "本音"],
+                message: "「『いい子』でいるのをやめて本音を解放した瞬間、魔法は解けて真実が現れます。」",
+                guidance: "嫌なことを我慢して飲み込んでいませんか？ 建前や遠慮を捨てて「私はこれが嫌だ！」「こうしたい！」と自分の本音をストレートに表現するエネルギーが、かえって停滞していた人間関係や状況を劇的に好転させる日です。",
+                luckyItem: "丸いアクセサリー・ボールペン、王冠モチーフ",
+                luckyAction: "自分の本当の気持ちを否定せず、「そう思ってもいい」と認めてあげる",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <path d="M44 36 L48 24 L55 31 L60 20 L65 31 L72 24 L76 36 Z" fill="#facc15" stroke="#854d0e" stroke-width="1.2"/>
+                    <circle cx="60" cy="68" r="24" fill="#eab308" stroke="#854d0e" stroke-width="1.5"/>
+                    <path d="M44 56 Q56 50 68 56" stroke="#fef9c3" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <path d="M40 76 Q60 86 80 76" stroke="#854d0e" stroke-width="1.2" fill="none"/>
+                </svg>`
+            },
+            {
+                id: "eastsunwestmoon",
+                roman: "XV",
+                name: "東の太陽と西の月の「娘」",
+                shortName: "東の太陽と西の月の娘",
+                origin: "ノルウェーの昔話",
+                region: "world",
+                keywords: ["行動力", "探求", "困難の突破"],
+                message: "「待つのではなく、自らガラスの山を越え、風を味方につけて運命を切り拓く時です。」",
+                guidance: "誰かが助けてくれるのを待つよりも、あなた自身が好奇心と勇気を持って一歩踏み出すことで道が開ける日です。難しそうに見える課題も、知恵を借りたり視点を変えたりすれば必ず突破できます。冒険者の心で今日を楽しんでください。",
+                luckyItem: "コンパス・地図アプリ、風通しの良い服",
+                luckyAction: "行ったことのない道やお店を選んで散歩してみる",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <circle cx="38" cy="36" r="12" fill="#f59e0b" stroke="#92400e" stroke-width="1.2"/>
+                    <path d="M84 24 A13 13 0 1 0 94 44 A10 10 0 1 1 84 24 Z" fill="#fef08a" stroke="#92400e" stroke-width="1.2"/>
+                    <polygon points="60,46 88,92 32,92" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
+                    <polygon points="60,46 72,92 32,92" fill="#e0f2fe" opacity="0.7"/>
+                    <path d="M24 72 Q60 64 96 72" stroke="#d4af37" stroke-width="1.8" fill="none"/>
+                </svg>`
+            },
+            {
+                id: "yagamihime",
+                roman: "XVI",
+                name: "やがみひめ（八上比売）",
+                shortName: "やがみひめ",
+                origin: "古事記・因幡の白うさぎ（日本）",
+                region: "japan",
+                keywords: ["本質を見抜く目", "優しさと誠実さ", "真実の縁"],
+                message: "「華やかな言葉や肩書きに惑わされず、傷ついたものに手を差し伸べる誠実な心を選びなさい。」",
+                guidance: "周囲の派手なアピールや甘い誘惑よりも、陰で誠実に振る舞う人や、あなた自身の「優しい選択」にこそ真実のご縁が宿ります。自分の直感と審美眼を信じて、「本当に心が温かくなるほう」を選ぶことで、揺るぎない幸運と良縁が結ばれます。",
+                luckyItem: "うさぎのモチーフ、勾玉・天然石のアクセサリー",
+                luckyAction: "周りの人に小さな親切や温かい言葉をかけてみる",
+                svg: `
+                <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <!-- 翡翠色の勾玉 -->
+                    <path d="M74 36 C88 36 94 52 86 66 C80 76 68 76 64 68 C62 63 66 58 71 58 C75 58 76 53 73 50 C69 46 66 36 74 36 Z" fill="#10b981" stroke="#065f46" stroke-width="1.5"/>
+                    <circle cx="75" cy="43" r="2.2" fill="#fef3c7"/>
+                    <!-- 因幡の白うさぎシルエット -->
+                    <path d="M40 52 Q36 32 42 30 Q47 32 46 50 Q52 33 57 35 Q59 42 52 54 Q62 60 60 76 Q58 88 42 88 Q30 88 32 72 Q33 60 40 52 Z" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+                    <circle cx="41" cy="60" r="2" fill="#e11d48"/>
+                    <!-- 紅白の椿 -->
+                    <circle cx="72" cy="84" r="9" fill="#e11d48" stroke="#881337" stroke-width="1"/>
+                    <circle cx="72" cy="84" r="3" fill="#facc15"/>
+                </svg>`
+            }
+        ];
+
+        // アプリケーション状態管理
+        let currentDeck = [];
+        let currentSelectedCard = null;
+        let isAnimating = false;
+        let soundEnabled = true;
+        let audioCtx = null;
+        const STORAGE_KEY = 'princess_oracle_16_discovered_v1';
+
+        // DOM要素
+        const cardsGrid = document.getElementById('cards-grid');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const openGrimoireBtn = document.getElementById('open-grimoire-btn');
+        const collectionBadge = document.getElementById('collection-badge');
+        const soundToggleBtn = document.getElementById('sound-toggle-btn');
+        const soundIconOn = document.getElementById('sound-icon-on');
+        const soundIconOff = document.getElementById('sound-icon-off');
+
+        const resultModal = document.getElementById('result-modal');
+        const artworkWrapper = document.getElementById('artwork-wrapper');
+        const shareResultBtn = document.getElementById('share-result-btn');
+        const drawAgainBtn = document.getElementById('draw-again-btn');
+        const modalToGrimoireBtn = document.getElementById('modal-to-grimoire-btn');
+
+        const grimoireModal = document.getElementById('grimoire-modal');
+        const closeGrimoireBtn = document.getElementById('close-grimoire-btn');
+        const closeGrimoireBottomBtn = document.getElementById('close-grimoire-bottom-btn');
+        const grimoireList = document.getElementById('grimoire-list');
+        const grimoireCount = document.getElementById('grimoire-count');
+        const originFilter = document.getElementById('origin-filter');
+        const resetHistoryBtn = document.getElementById('reset-history-btn');
+        const toastMsg = document.getElementById('toast-msg');
+        const clipboardHelper = document.getElementById('clipboard-helper');
+
+        /**
+         * Web Audio APIによる優しいハープ・チャイム音生成（外部音声ファイル不要）
+         */
+        function playChime(type = 'flip') {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AudioContext();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const now = audioCtx.currentTime;
+                // ペンタトニックの優しい和音（C5, E5, G5, B5, D6）
+                const notes = type === 'shuffle' 
+                    ? [523.25, 659.25, 783.99] 
+                    : [523.25, 659.25, 783.99, 987.77, 1174.66];
+
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+
+                    gain.gain.setValueAtTime(0.001, now + idx * 0.07);
+                    gain.gain.exponentialRampToValueAtTime(0.06, now + idx * 0.07 + 0.03);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.07 + 0.9);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start(now + idx * 0.07);
+                    osc.stop(now + idx * 0.07 + 0.95);
+                });
+            } catch (e) {
+                // ブラウザ制限時は無音で続行
+            }
+        }
+
+        /**
+         * トースト通知を表示
+         */
+        function showToast(message) {
+            toastMsg.textContent = message;
+            toastMsg.classList.remove('hidden');
+            clearTimeout(toastMsg._timer);
+            toastMsg._timer = setTimeout(() => {
+                toastMsg.classList.add('hidden');
+            }, 2500);
+        }
+
+        /**
+         * localStorageから出会ったお姫様ID配列を取得
+         */
+        function getDiscoveredIds() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        /**
+         * お姫様IDを発見済みとして保存
+         */
+        function markAsDiscovered(cardId) {
+            try {
+                const list = getDiscoveredIds();
+                if (!list.includes(cardId)) {
+                    list.push(cardId);
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+                }
+                updateCollectionBadge();
+            } catch (e) {}
+        }
+
+        /**
+         * コレクション進捗バッジの更新
+         */
+        function updateCollectionBadge() {
+            const count = getDiscoveredIds().length;
+            collectionBadge.textContent = `${count}/16`;
+            grimoireCount.textContent = count;
+        }
+
+        /**
+         * 配列のシャッフル（フィッシャー–イェーツ）
+         */
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        /**
+         * カード裏面のSVG幾何学デザイン生成
+         */
+        function createCardBackSVG() {
+            return `
+            <svg viewBox="0 0 100 136" class="w-full h-full opacity-90">
+                <defs>
+                    <linearGradient id="cardGold16" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f3e5ab"/>
+                        <stop offset="50%" stop-color="#d4af37"/>
+                        <stop offset="100%" stop-color="#997a15"/>
+                    </linearGradient>
+                </defs>
+                <rect x="5" y="5" width="90" height="126" rx="4" fill="none" stroke="url(#cardGold16)" stroke-width="0.9" stroke-opacity="0.7"/>
+                <polygon points="50,20 78,68 50,116 22,68" fill="none" stroke="url(#cardGold16)" stroke-width="0.8" stroke-opacity="0.6"/>
+                <circle cx="50" cy="68" r="20" fill="none" stroke="url(#cardGold16)" stroke-width="1"/>
+                <circle cx="50" cy="68" r="15" fill="none" stroke="url(#cardGold16)" stroke-width="0.5" stroke-dasharray="2 2"/>
+                <path d="M53 57 A11 11 0 1 0 61 75 A8.5 8.5 0 1 1 53 57 Z" fill="url(#cardGold16)"/>
+                <path d="M43 62 L44.5 66 L48.5 67.5 L44.5 69 L43 73 L41.5 69 L37.5 67.5 L41.5 66 Z" fill="url(#cardGold16)"/>
+            </svg>`;
+        }
+
+        /**
+         * 16枚のカードを4x4グリッドに描画
+         */
+        function renderCards() {
+            cardsGrid.innerHTML = '';
+            currentDeck.forEach((card, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'oracle-card-wrapper';
+                wrapper.setAttribute('role', 'button');
+                wrapper.setAttribute('aria-label', `オラクルカード ${index + 1}枚目`);
+                wrapper.tabIndex = 0;
+
+                wrapper.innerHTML = `
+                    <div class="oracle-card-inner">
+                        <!-- 裏面 -->
+                        <div class="card-face card-back">
+                            <div class="card-back-inner">
+                                ${createCardBackSVG()}
+                            </div>
+                        </div>
+                        <!-- 表面（めくれた瞬間のプレビュー） -->
+                        <div class="card-face card-front-mini">
+                            <span class="font-cinzel text-[9px] font-bold text-amber-800 leading-none">${card.roman}</span>
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 my-0.5">${card.svg}</div>
+                            <span class="text-[8px] sm:text-[9px] font-bold text-stone-900 leading-tight line-clamp-2 px-0.5">${card.shortName}</span>
+                        </div>
+                    </div>
+                `;
+
+                wrapper.addEventListener('click', () => handleCardSelect(wrapper, card));
+                wrapper.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleCardSelect(wrapper, card);
+                    }
+                });
+
+                cardsGrid.appendChild(wrapper);
+            });
+        }
+
+        /**
+         * イラスト周りにキラキラパーティクルを散らす演出
+         */
+        function spawnSparkles() {
+            const existing = artworkWrapper.querySelectorAll('.sparkle-dot');
+            existing.forEach(el => el.remove());
+
+            for (let i = 0; i < 14; i++) {
+                const dot = document.createElement('span');
+                dot.className = 'sparkle-dot';
+                const angle = (Math.PI * 2 * i) / 14;
+                const dist = 55 + Math.random() * 35;
+                dot.style.left = '50%';
+                dot.style.top = '50%';
+                dot.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+                dot.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
+                artworkWrapper.appendChild(dot);
+            }
+        }
+
+        /**
+         * カード選択時の処理（3Dフリップ → 結果モーダル表示）
+         */
+        function handleCardSelect(cardElement, cardData) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            playChime('flip');
+            cardElement.classList.add('is-flipped');
+            markAsDiscovered(cardData.id);
+
+            setTimeout(() => {
+                openResultModal(cardData);
+                isAnimating = false;
+            }, 720);
+        }
+
+        /**
+         * 結果モーダルにデータを流し込んで表示
+         */
+        function openResultModal(card) {
+            currentSelectedCard = card;
+            document.getElementById('res-roman').textContent = card.roman;
+            document.getElementById('res-name').textContent = card.name;
+            document.getElementById('res-origin').textContent = `出典：${card.origin}`;
+            document.getElementById('res-artwork').innerHTML = card.svg;
+            document.getElementById('res-message').textContent = card.message;
+            document.getElementById('res-guidance').textContent = card.guidance;
+            document.getElementById('res-item').textContent = card.luckyItem;
+            document.getElementById('res-action').textContent = card.luckyAction;
+
+            const kwContainer = document.getElementById('res-keywords');
+            kwContainer.innerHTML = '';
+            card.keywords.forEach(kw => {
+                const span = document.createElement('span');
+                span.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-800/15 text-amber-950 border border-amber-700/30';
+                span.textContent = `# ${kw}`;
+                kwContainer.appendChild(span);
+            });
+
+            resultModal.classList.remove('hidden');
+            resultModal.scrollTop = 0;
+            spawnSparkles();
+        }
+
+        /**
+         * SNS用テキストコピー処理（iFrame制限を考慮しexecCommandを使用）
+         */
+        function copyResultToClipboard() {
+            if (!currentSelectedCard) return;
+            const c = currentSelectedCard;
+            const shareText = `✨今日のお姫様オラクル✨\n【${c.roman}. ${c.name}】(${c.origin})\n${c.message}\nキーワード：${c.keywords.map(k => '#' + k).join(' ')}\nラッキーアイテム：${c.luckyItem}\n#今日のお姫様オラクル #昔話占い`;
+
+            clipboardHelper.value = shareText;
+            clipboardHelper.classList.remove('sr-only');
+            clipboardHelper.select();
+            clipboardHelper.setSelectionRange(0, 99999);
+
+            try {
+                document.execCommand('copy');
+                showToast('占い結果をクリップボードにコピーしました！');
+            } catch (err) {
+                showToast('コピーできませんでした');
+            }
+            clipboardHelper.classList.add('sr-only');
+        }
+
+        /**
+         * シャッフル実行
+         */
+        function triggerShuffle() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            playChime('shuffle');
+            cardsGrid.classList.add('shuffling');
+            showToast('16枚のカードをシャッフルしています…');
+
+            setTimeout(() => {
+                currentDeck = shuffleArray(PRINCESS_CARDS);
+                renderCards();
+                cardsGrid.classList.remove('shuffling');
+                isAnimating = false;
+            }, 600);
+        }
+
+        /**
+         * お姫様図鑑のリストを描画
+         */
+        function renderGrimoireList() {
+            const discovered = getDiscoveredIds();
+            const filterVal = originFilter.value;
+            updateCollectionBadge();
+            grimoireList.innerHTML = '';
+
+            const filtered = PRINCESS_CARDS.filter(card => {
+                if (filterVal === 'all') return true;
+                return card.region === filterVal;
+            });
+
+            filtered.forEach(card => {
+                const isFound = discovered.includes(card.id);
+                const itemBtn = document.createElement('button');
+                itemBtn.type = 'button';
+                itemBtn.className = `text-left p-2.5 rounded-xl border transition flex items-center gap-2.5 active:scale-98 ${
+                    isFound 
+                    ? 'bg-slate-800/90 border-amber-400/50 hover:bg-slate-800' 
+                    : 'bg-slate-950/65 border-slate-700/60 hover:border-amber-500/30 opacity-85'
+                }`;
+
+                itemBtn.innerHTML = `
+                    <div class="w-11 h-11 rounded-full bg-amber-100/95 border border-amber-500/60 p-1.5 shrink-0 flex items-center justify-center">
+                        ${card.svg}
+                    </div>
+                    <div class="min-w-0 flex-grow">
+                        <div class="flex items-center gap-1.5 mb-0.5">
+                            <span class="font-cinzel text-[11px] text-amber-400 font-bold">${card.roman}.</span>
+                            ${isFound 
+                                ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-400/40">出会った証</span>' 
+                                : '<span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400">未発見</span>'
+                            }
+                        </div>
+                        <p class="text-xs sm:text-sm font-bold text-amber-50 truncate">${card.shortName}</p>
+                        <p class="text-[10px] text-amber-200/60 truncate">${card.origin}</p>
+                    </div>
+                `;
+
+                itemBtn.addEventListener('click', () => {
+                    grimoireModal.classList.add('hidden');
+                    openResultModal(card);
+                });
+
+                grimoireList.appendChild(itemBtn);
+            });
+        }
+
+        function openGrimoire() {
+            renderGrimoireList();
+            grimoireModal.classList.remove('hidden');
+            grimoireModal.scrollTop = 0;
+        }
+
+        // イベントリスナー登録
+        soundToggleBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            soundIconOn.classList.toggle('hidden', !soundEnabled);
+            soundIconOff.classList.toggle('hidden', soundEnabled);
+            if (soundEnabled) {
+                playChime('shuffle');
+                showToast('効果音をONにしました');
+            } else {
+                showToast('効果音をOFFにしました');
+            }
+        });
+
+        shuffleBtn.addEventListener('click', triggerShuffle);
+        shareResultBtn.addEventListener('click', copyResultToClipboard);
+
+        drawAgainBtn.addEventListener('click', () => {
+            resultModal.classList.add('hidden');
+            currentDeck = shuffleArray(PRINCESS_CARDS);
+            renderCards();
+        });
+
+        openGrimoireBtn.addEventListener('click', openGrimoire);
+        originFilter.addEventListener('change', renderGrimoireList);
+
+        modalToGrimoireBtn.addEventListener('click', () => {
+            resultModal.classList.add('hidden');
+            openGrimoire();
+        });
+
+        closeGrimoireBtn.addEventListener('click', () => {
+            grimoireModal.classList.add('hidden');
+        });
+
+        closeGrimoireBottomBtn.addEventListener('click', () => {
+            grimoireModal.classList.add('hidden');
+        });
+
+        resetHistoryBtn.addEventListener('click', () => {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+                updateCollectionBadge();
+                renderGrimoireList();
+                showToast('出会いの記録をリセットしました');
+            } catch (e) {}
+        });
+
+        // 背景タップでモーダルを閉じる
+        resultModal.addEventListener('click', (e) => {
+            if (e.target === resultModal) {
+                resultModal.classList.add('hidden');
+                currentDeck = shuffleArray(PRINCESS_CARDS);
+                renderCards();
+            }
+        });
+
+        grimoireModal.addEventListener('click', (e) => {
+            if (e.target === grimoireModal) {
+                grimoireModal.classList.add('hidden');
+            }
+        });
+
+        // 初期化処理
+        window.addEventListener('DOMContentLoaded', () => {
+            currentDeck = shuffleArray(PRINCESS_CARDS);
+            renderCards();
+            updateCollectionBadge();
+        });
+    </script>
+</body>
+</html>
