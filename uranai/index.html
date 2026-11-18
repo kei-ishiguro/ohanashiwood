@@ -459,87 +459,23 @@ function drawFortune() {
 
 
     <div class="container">
-        <h1>📜 なまえ占い</h1>
-        <p>あなたの名前を入力して、どの昔話の主人公タイプか診断しよう！</p>
+        <h1>📜 なまえ&誕生日占い</h1>
+        <p>なまえとおたんじょうびを入れて、<br>
+あなたの中に眠る「生まれ持った宿命」と「今日の物語」を紐解きます</p>
         
-        <input type="text" id="username" placeholder="あなたの名前を入力">
+        
         <br>
-        <button onclick="uranai()">占う！</button>
 
+
+<a href="mukashibanashi_uranai.html">
+  <button type="button">占う</button>
+</a>
 
            </div>
-
-<div id="name-result" class="result">
-    <h2 id="chara-name"></h2>
-    <p id="chara-desc"></p>
-    <p>
-        <strong>ラッキーアイテム：</strong>
-        <span id="lucky-item"></span>
-    </p>
-</div>
+<br><br>
 
 
-    <script>
-        // 昔話のキャラクターデータのリスト
-        const stories = [
-            {
-                name: "🍑 桃太郎 タイプ",
-                desc: "カリスマ性と行動力にあふれるリーダータイプ！ 仲間と一緒に大きな困難を乗り越えることができます。きびだんご（おやつ）を分け合うとさらに運気アップ。",
-                item: "きびだんご"
-            },
-            {
-                name: "🐢 浦島太郎 タイプ",
-                desc: "優しくて好奇心が旺盛なマイペースタイプ。楽しいことに夢中になりすぎて時間を忘れてしまうかも？ たまには周りのアドバイスに耳を傾けてみて。",
-                item: "カメのぬいぐるみ"
-            },
-            {
-                name: "🎋 かぐや姫 タイプ",
-                desc: "周囲を魅了する神秘的な魅力の持ち主。才能に満ち溢れていますが、心の内をあまり見せないミステリアスな一面も。自分の気持ちを素直に伝えてみましょう。",
-                item: "竹の置物"
-            },
-            {
-                name: "🍚 一寸法師 タイプ",
-                desc: "小柄でも、知恵と勇気で大きな相手に立ち向かえる大器晩成型！ 小さな工夫や努力が、のちに大きな幸運を引き寄せます。針（お裁縫道具）にツキあり。",
-                item: "お椀と箸"
-            },
-            {
-                name: "🐻 金太郎 タイプ",
-                desc: "元気いっぱいで力持ち、正義感が強いムードメーカー！ どんな壁にぶつかっても、持ち前のパワーと明るさで一気に突破できる勢いがあります。",
-                item: "まさかり（の形のキーホルダー）"
-            },
-            {
-                name: "👺 鶴の恩返し タイプ",
-                desc: "義理堅く、感謝の気持ちを大切にする心優しい人。普段は隠しているあなたの隠れた才能や美しさが、近いうちに周囲から高く評価されそうです。",
-                item: "織物（マフラーなど）"
-            }
-        ];
 
-        function uranai() {
-            const nameInput = document.getElementById("username").value.trim();
-            
-            if (nameInput === "") {
-                alert("名前を入力してください！");
-                return;
-            }
-document.getElementById("result")            // 名前の文字を数値に変換して、ランダムかつ一貫性のある結果を出すロジック
-            let hash = 0;
-            for (let i = 0; i < nameInput.length; i++) {
-                hash += nameInput.charCodeAt(i);
-            }
-
-            // リストのインデックスを決定
-            const index = hash % stories.length;
-            const result = stories[index];
-
-            // 結果を表示
-            document.getElementById("chara-name").innerText = `あなたは「${result.name}」です！`;
-            document.getElementById("chara-desc").innerText = result.desc;
-            document.getElementById("lucky-item").innerText = result.item;
-
-            const resultDiv = document.getElementById("name-result");
-            resultDiv.style.display = "block";
-        }
-    </script>
     <div class="forest">🌳🌳🌳🌳🌳🌳🌿🌳🌳🌳🌳🌳🌳</div>
 
 

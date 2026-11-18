@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オリジナルの昔話占い（12選拡大版）</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #fdfbf7;
+            color: #333;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #e8dec0;
+        }
+        h1 { color: #b5651d; margin-bottom: 5px; font-family: serif; }
+        .subtitle { color: #777; font-size: 14px; margin-bottom: 25px; }
+        
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+            background: #fdfaf5;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 14px;
+        }
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .date-selects {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            background-color: #b5651d;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.2s;
+            font-weight: bold;
+        }
+        button:hover { background-color: #934e13; }
+        
+        #result {
+            margin-top: 35px;
+            padding: 25px;
+            background: #fffcf5;
+            border: 2px dashed #d4b27c;
+            border-radius: 10px;
+            text-align: left;
+            display: none;
+        }
+        .story-title {
+            text-align: center;
+            color: #b5651d;
+            font-family: serif;
+            font-size: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e8dec0;
+            padding-bottom: 10px;
+        }
+        .story-body {
+            line-height: 1.8;
+            color: #444;
+            font-size: 15px;
+        }
+        .highlight-birth { color: #c0392b; font-weight: bold; }
+        .highlight-name { color: #2980b9; font-weight: bold; }
+        .lucky-box {
+            margin-top: 20px;
+            background: #f4ecdf;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📜 昔話占い</h1>
+　～あなたの　ものがたり～
+        <p class="subtitle">12の昔話の精霊たちが、あなただけの物語を紡ぎます</p>
+        
+        <div class="input-group">
+            <label for="username">お名前（またはニックネーム）：</label>
+            <input type="text" id="username" placeholder="例：おむすび太郎">
+        </div>
+
+        <div class="input-group">
+            <label>お誕生日（生まれ持った素質）：</label>
+            <div class="date-selects">
+                <select id="month">
+                    <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option>
+                    <option value="4">4月</option><option value="5">5月</option><option value="6">6月</option>
+                    <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option>
+                    <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                </select>
+                <select id="day">
+                    <script>
+                        for(let i=1; i<=31; i++) {
+                            document.write(`<option value="${i}">${i}日</option>`);
+                        }
+                    </script>
+                </select>
+            </div>
+        </div>
+
+        <button onclick="generateStory()">昔話をひも解く</button>
+
+        <div id="result">
+            <div class="story-title" id="story-heading"></div>
+            <div class="story-body" id="story-content"></div>
+            <div class="lucky-box" id="lucky-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // ① 生年月日から決まる「本質・キャラクター」（12選に拡大）
+        const birthTypes = [
+            {
+                name: "桃太郎タイプ",
+                nature: "正義感にあふれ、大きな志を胸に仲間を率いて進む開拓者",
+                trait: "どんな高い壁にぶつかっても、「えいやっ」と立ち上がる強い心を持っています。"
+            },
+            {
+                name: "浦島太郎タイプ",
+                nature: "好奇心が強く、自分の「好き」やマイペースな時間を何よりも大切にするロマンチスト",
+                trait: "目の前の美しい景色や楽しいことに夢中になれる、豊かな感性の持ち主です。"
+            },
+            {
+                name: "かぐや姫タイプ",
+                nature: "凛とした気品と、周囲をハッとさせる神秘的な知性を秘めた表現者",
+                trait: "心の中に広がる美しい世界を持っており、自然とまわりの人々を魅了します。"
+            },
+            {
+                name: "一寸法師タイプ",
+                nature: "小柄であっても（あるいは一見不利な状況でも）、卓越した知恵と機転で道を切り拓く大器晩成型",
+                trait: "「小さな工夫」とコードを越える知恵で、大きな逆境をひっくり返すパワーを秘めています。"
+            },
+            {
+                name: "金太郎タイプ",
+                nature: "底抜けに明るく、抜群のパワーと温かい優しさで周囲を笑顔にするムードメーカー",
+                trait: "困っている人を見ると放っておけない真っ直ぐな優しさと、豪快な行動力を持っています。"
+            },
+            {
+                name: "鶴の恩返しタイプ",
+                nature: "義理堅く、見えないところでも真面目に努力を重ねるピュアな心を持った職人肌",
+                trait: "恩や人とのつながりを大切にし、あなたが生み出すクリエイティブな成果は周囲を感動させます。"
+            },
+            {
+                name: "花咲かじいさんタイプ",
+                nature: "草木や生き物を愛し、関わるものすべてをパッと明るく蘇らせる慈愛の人",
+                trait: "あなたの温かいまなざしや言葉が、枯れかけた物事や人々の心に美しい花を咲かせます。"
+            },
+            {
+                name: "一休さんタイプ",
+                nature: "機知に富み、ユニークなアイデアと柔軟な頭脳で難問をひらりとすり抜ける天才",
+                trait: "「この手があったか！」と思わせる鋭いひらめきで、まわりの人々をハッと驚かせます。"
+            },
+            {
+                name: "笠地蔵タイプ",
+                nature: "見返りを求めず、困っている人にそっと手を差し伸べられる無私の優しさの持ち主",
+                trait: "あなたの密かな優しさは、やがて巡り巡って何倍もの温かい福をあなた自身に呼び寄せます。"
+            },
+            {
+                name: "因幡の白うさぎタイプ",
+                nature: "愛嬌と愛され力抜群！ 人懐っこさと機転でピンチをチャンスに変える世渡り上手",
+                trait: "たとえ失敗しても、持ち前の愛されキャラと素直さで、周囲の助けをスルスル引き寄せます。"
+            },
+            {
+                name: "わらしべ長者タイプ",
+                nature: "ささやかな出会いや物を大切にし、ご縁の連鎖で人生を豊かに広げていく幸運の持ち主",
+                trait: "「これ大切だな」と思った小さなご縁をコツコツ育てることで、やがて大きな実りへと変えていきます。"
+            },
+            {
+                name: "ぶんぶく茶釜タイプ",
+                nature: "ユーモアと愛嬌にあふれ、周囲にサプライズや笑顔をもたらすエンターテイナー",
+                trait: "ピンチのときでもユーモアで乗り切る柔軟さがあり、あなたの周りにはいつも温かい笑いの輪が広がります。"
+            }
+        ];
+
+        // ② 名前から決まる「今日の行動パターン・立ち回り」
+        const namePatterns = [
+            {
+                action: "ふと立ち止まって、古いお友達に手紙を書いたり連絡を取ってみたりする",
+                scene: "不思議なご縁が再びつながり、あたたかいサプライズが舞い込む"
+            },
+            {
+                action: "いつもの道とは違う、ちょっと遠回りの小道を探検してみる",
+                scene: "思いがけない素敵な景色や、自分だけの小さなお宝（お気に入りのもの）を発見する"
+            },
+            {
+                action: "お気に入りの温かいお茶をいれて、自分の心とゆっくり対話する",
+                scene: "長年モヤモヤしていたことの答えが、ふっと心に降りてくる"
+            },
+            {
+                action: "誰かのためにお手伝いや小さな親切をそっと実践してみる",
+                scene: "その優しさが巡り巡って、数倍になって自分に嬉しい形で返ってくる"
+            },
+            {
+                action: "ずっと後回しにしていた引き出しの片付けや、小さな作業に没頭する",
+                scene: "心の中まですっきりと晴れわたり、新しい挑戦へのエネルギーが満ちてくる"
+            },
+            {
+                action: "窓を開けて大きく深呼吸し、新しい風を部屋と心にめぐらせる",
+                scene: "滞っていたことが嘘のようにスムーズに動き出し、アイデアが次々と湧き出る"
+            }
+        ];
+
+        // ラッキーアイテム候補
+        const luckyItems = [
+            "きびだんご", "小さな貝殻", "竹のしおり", "お椀と箸", 
+            "赤いお手製のお守り", "美しい布の切れ端", "きれいな小石", 
+            "お気に入りのティーカップ", "新しく買ったノート", "木の実やどんぐり"
+        ];
+
+        function generateStory() {
+            const name = document.getElementById("username").value.trim() || "旅人";
+            const month = parseInt(document.getElementById("month").value);
+            const day = parseInt(document.getElementById("day").value);
+
+            // 1. 誕生日のスコアから「生まれ持ったキャラクター」を決定 (12種類に対応)
+            const birthScore = (month * 31) + day;
+            const birthChara = birthTypes[birthScore % birthTypes.length];
+
+            // 2. 名前の文字コードから「今日の行動パターン」を決定
+            let nameScore = 0;
+            for (let i = 0; i < name.length; i++) {
+                nameScore += name.charCodeAt(i) * (i + 1);
+            }
+            const namePattern = namePatterns[nameScore % namePatterns.length];
+            const luckyItem = luckyItems[nameScore % luckyItems.length];
+
+            // 3. 語り出し風のストーリー文章を組み立てる
+            let heading = `📖 むかしむかしの物語り（ ${name}さんの章 ）`;
+            
+            let storyText = `
+                <strong>むかし、むかし、あるところに……</strong><br>
+                心に<span class="highlight-birth">【 ${birthChara.name} 】</span>の気質を宿した、<strong>${name}</strong>という人がおりました。<br><br>
+                
+                あなたは生まれながらにして${birthChara.nature}。${birthChara.trait}<br><br>
+                
+                ある日のこと。そんな${name}さんが、ふと足を止めて考えておりました。<br>
+                「今日という日は、いったいどんな物語になるのだろう？」と。<br><br>
+                
+                すると不思議な風がふわりと吹き抜け、今日のあなたには<span class="highlight-name">【 ${namePattern.action} 】</span>ような出来事が訪れそうです。<br>
+                その小さな一歩がきっかけとなって、物語の先では<span class="highlight-name">${namePattern.scene}</span>ことでしょう。<br><br>
+                
+                さあ、今日のあなただけの昔話のページを、明るくめくってみましょう――。
+            `;
+
+            let luckyText = `<strong>🎁 今日の物語のキーアイテム：</strong> ${luckyItem}`;
+
+            // 画面に反映
+            document.getElementById("story-heading").innerHTML = heading;
+            document.getElementById("story-content").innerHTML = storyText;
+            document.getElementById("lucky-content").innerHTML = luckyText;
+
+            document.getElementById("result").style.display = "block";
+        }
+    </script>
+
+</body>
+</html>

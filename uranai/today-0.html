@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>昔話占い（今日の運勢＆相性診断）</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #fdfbf7;
+            color: #333;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 550px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 { color: #d9534f; margin-bottom: 5px; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 25px; }
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #ddd;
+        }
+        .section:last-child { border-bottom: none; margin-bottom: 0; }
+        input[type="text"] {
+            width: 75%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        button:hover { background-color: #c9302c; }
+        button.aishou-btn { background-color: #e67e22; }
+        button.aishou-btn:hover { background-color: #d35400; }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px 20px;
+            background: #f9f9f9;
+            border-left: 5px solid #d9534f;
+            text-align: left;
+            display: none;
+        }
+        .aishou-result { border-left-color: #e67e22; }
+        h3 { margin-top: 0; color: #d9534f; }
+        .aishou-result h3 { color: #e67e22; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📜 昔話占い DX</h1>
+        <p class="subtitle">日替わり運勢と、あの人との昔話相性を占おう！</p>
+        
+        <!-- ① 今日の運勢セクション -->
+        <div class="section">
+            <h2>🔮 今日のあなたの運勢</h2>
+            <input type="text" id="username" placeholder="あなたの名前を入力">
+            <br>
+            <button onclick="uranaiToday()">今日の運勢を占う！</button>
+
+            <div id="today-result" class="result-box">
+                <h3 id="today-title"></h3>
+                <p id="today-desc"></p>
+                <p><strong>今日のラッキーアイテム：</strong> <span id="today-item"></span></p>
+            </div>
+        </div>
+
+        <!-- ② 相性診断セクション -->
+        <div class="section">
+            <h2>💞 昔話キャラ相性診断</h2>
+            <input type="text" id="name1" placeholder="1人目の名前">
+            <input type="text" id="name2" placeholder="2人目の名前（気になる人・友人など）">
+            <br>
+            <button class="aishou-btn" onclick="uranaiAishou()">2人の相性を占う！</button>
+
+            <div id="aishou-result" class="result-box aishou-result">
+                <h3 id="aishou-title"></h3>
+                <p id="aishou-pair"></p>
+                <p id="aishou-desc"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const stories = [
+            {
+                name: "🍑 桃太郎",
+                desc: "行動力とリーダーシップが高まる日！ 迷っていたことがあるなら今日がスタートのチャンス。",
+                item: "きびだんご（和菓子）"
+            },
+            {
+                name: "🐢 浦島太郎",
+                desc: "マイペースに楽しむことで幸運が舞い込む日。少し寄り道をしてみると素敵な発見があるかも。",
+                item: "海や水辺の写真"
+            },
+            {
+                name: "🎋 かぐや姫",
+                desc: "直感が冴えわたり、周囲から注目を集める日。自分の感性を信じて行動すると吉。",
+                item: "キラキラしたアクセサリー"
+            },
+            {
+                name: "🍚 一寸法師",
+                desc: "小さな工夫や気配りが大きな評価につながる日。細かい作業や整理整頓がおすすめ。",
+                item: "お気に入りの箸やスプーン"
+            },
+            {
+                name: "🐻 金太郎",
+                desc: "エネルギー満タン！ 体力勝負のことや、少しハードルの高い課題も一気に片付けられます。",
+                item: "赤い小物"
+            },
+            {
+                name: "🦢 鶴の恩返し",
+                desc: "優しさと丁寧さが運気を呼ぶ日。誰かのサポートに回ると、後で大きな感謝が返ってきます。",
+                item: "ハンカチやストール"
+            }
+        ];
+
+        // 文字列を数値（ハッシュ値）に変換する共通関数
+        function getNameScore(str) {
+            let score = 0;
+            for (let i = 0; i < str.length; i++) {
+                score += str.charCodeAt(i) * (i + 1); // 文字の位置も掛け合わせてバリエーションを増やす
+            }
+            return score;
+        }
+
+        // ① 今日の運勢（日付連動）
+        function uranaiToday() {
+            const name = document.getElementById("username").value.trim();
+            if (!name) {
+                alert("名前を入力してください！");
+                return;
+            }
+
+            // 今日の日付から数値を生成（例: 2026年11月16日 -> 2026 + 11 + 16）
+            const today = new Date();
+            const dateScore = today.getFullYear() + (today.getMonth() + 1) + today.getDate();
+
+            // 名前のスコア ＋ 日付のスコア でインデックスを決定
+            const totalScore = getNameScore(name) + dateScore;
+            const index = totalScore % stories.length;
+            const result = stories[index];
+
+            document.getElementById("today-title").innerText = `今日の${name}さんは「${result.name}」タイプ！`;
+            document.getElementById("today-desc").innerText = result.desc;
+            document.getElementById("today-item").innerText = result.item;
+            document.getElementById("today-result").style.display = "block";
+        }
+
+        // ② 相性診断
+        function uranaiAishou() {
+            const name1 = document.getElementById("name1").value.trim();
+            const name2 = document.getElementById("name2").value.trim();
+
+            if (!name1 || !name2) {
+                alert("2人分の名前を入力してください！");
+                return;
+            }
+
+            const score1 = getNameScore(name1);
+            const score2 = getNameScore(name2);
+
+            // それぞれの基本キャラクターを算出
+            const chara1 = stories[score1 % stories.length];
+            const chara2 = stories[score2 % stories.length];
+
+            // 2人のスコアを合算して相性度（50%〜100%）を計算
+            const combinedScore = score1 + score2;
+            const percentage = 50 + (combinedScore % 51);
+
+            // 相性に応じたメッセージ分岐
+            let message = "";
+            if (percentage >= 90) {
+                message = "まさに鬼に金棒の最強タッグ！ お互いの長所を引き出し合い、どんな困難も笑い飛ばせる最高の相性です。";
+            } else if (percentage >= 75) {
+                message = "とても心地よい関係！ 一緒にいると自然と笑顔が増え、新しいアイデアや楽しい時間がどんどん生まれます。";
+            } else if (percentage >= 60) {
+                message = "違いを認め合える良いバランス。自分にはない視点を相手が持っているので、相談すると良いヒントがもらえそう。";
+            } else {
+                message = "ちょっとマイペース同士かも？ お互いの時間を尊重しつつ、たまに美味しいものを一緒に食べると一気に距離が縮まります！";
+            }
+
+            document.getElementById("aishou-title").innerText = `相性度：${percentage}%！`;
+            document.getElementById("aishou-pair").innerHTML = `<strong>${name1}</strong>（${chara1.name}） × <strong>${name2}</strong>（${chara2.name}）`;
+            document.getElementById("aishou-desc").innerText = message;
+            document.getElementById("aishou-result").style.display = "block";
+        }
+    </script>
+
+</body>
+</html>
